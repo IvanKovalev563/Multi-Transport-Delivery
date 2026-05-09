@@ -1,4 +1,5 @@
 using DataAccess;
+using Order_Manager;
 
 namespace MultiTransportDelivery
 {
@@ -7,6 +8,18 @@ namespace MultiTransportDelivery
         public FormMain()
         {
             InitializeComponent();
+
+        }
+
+        private void FormMain_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FormAbout about = new FormAbout();
+            about.ShowDialog();
         }
     }
 }
