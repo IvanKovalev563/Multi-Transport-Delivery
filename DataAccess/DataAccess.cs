@@ -67,13 +67,13 @@ namespace DataAccess
             }
             return true;
         }
-        public static void delClient(string LName, string FName, string Surname, string Phone, string Email)
+        public static void delClient(int id)
         {
             try
             {
                 using (var conn = DatabaseAccess.connectDB())
                 {
-                    using (var cmd = new MySqlCommand($"delete from client where (first_name like '{FName}' and last_name like '{LName}' and surname like '{Surname}' and phone like '{Phone}' and email like'{Email}')", conn))
+                    using (var cmd = new MySqlCommand($"delete from client where (client_id={id})", conn))
                     {
                         cmd.ExecuteNonQuery();
                     }
@@ -87,6 +87,55 @@ namespace DataAccess
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка удаления данных из client: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        public static bool editClient(string Name, string Address, string PersAccount, string Phone, ListViewItem oldClient)
+        {
+            try
+            {
+                using (var conn = DatabaseAccess.connectDB())
+                {
+                    using (var cmd = new MySqlCommand(
+                        $"update client" +
+                        $" set full_name = '{Name}', address = '{Address}', personal_account = '{PersAccount}', phone = '{Phone}'" +
+                        $" where client_id={oldClient.SubItems[4].Text}", conn))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка изменения данных в client: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+            return true;
+        }
+        public static bool isClientDuplicate(string Name, string Address, string PersonalAccount, string Phone)
+        {
+            try
+            {
+                using (var conn = DatabaseAccess.connectDB())
+                {
+                    using (var cmd = new MySqlCommand(@"SELECT COUNT(*) FROM client 
+                           WHERE full_name = @fn AND address = @ad AND personal_account = @pa 
+                           AND phone = @ph", conn))
+                    {
+                        cmd.Parameters.AddWithValue("@fn", Name);
+                        cmd.Parameters.AddWithValue("@pa", PersonalAccount);
+                        cmd.Parameters.AddWithValue("@ad", Address);
+                        cmd.Parameters.AddWithValue("@ph", Phone);
+
+                        int count = Convert.ToInt32(cmd.ExecuteScalar());
+                        return count > 0;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при проверке дубликата клиента: {ex.Message}",
+                                "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
             }
         }
     }
