@@ -6,6 +6,16 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+    
+    <VersionBase>$([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)version.txt').Trim())</VersionBase>
+    <BuildDate>$([System.DateTime]::Now.ToString("ddMMyyyy"))</BuildDate>
+    <AssemblyVersion>$(VersionBase).0</AssemblyVersion>
+    <FileVersion>$(VersionBase).0</FileVersion>
+    <InformationalVersion>$(VersionBase)-dev.$(BuildDate)</InformationalVersion>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DataAccess\DataAccess.csproj" />
+  </ItemGroup>
 
 </Project>
