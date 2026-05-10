@@ -48,5 +48,16 @@ namespace MultiTransportDelivery
             FormClients client = new FormClients();
             client.ShowDialog();
         }
+
+        private void buttonTransport_Click(object sender, EventArgs e)
+        {
+            FormTransport transport = new FormTransport();
+            transport.ShowDialog();
+        }
+
+        private void buttonDirections_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

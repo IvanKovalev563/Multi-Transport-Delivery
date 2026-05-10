@@ -27,9 +27,17 @@ namespace MultiTransportDelivery
             List<ListViewItem> items = DataClient.getClients("");
             listViewClients.Items.Clear();
 
-            foreach (ListViewItem item in items)
+            if (items.Count > 0)
             {
-                listViewClients.Items.Add(item);
+                labelEmptyClients.Visible = false;
+                for (int i = 0; i < items.Count; i++)
+                {
+                    listViewClients.Items.Add(items[i]);
+                }
+            }
+            else
+            {
+                labelEmptyClients.Visible = true;
             }
         }
 

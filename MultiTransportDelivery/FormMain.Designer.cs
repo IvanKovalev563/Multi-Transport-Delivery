@@ -176,6 +176,7 @@
             buttonTransport.TabIndex = 7;
             buttonTransport.Text = "Транспорт";
             buttonTransport.UseVisualStyleBackColor = true;
+            buttonTransport.Click += buttonTransport_Click;
             // 
             // buttonDirections
             // 
@@ -187,6 +188,7 @@
             buttonDirections.TabIndex = 8;
             buttonDirections.Text = "Направления";
             buttonDirections.UseVisualStyleBackColor = true;
+            buttonDirections.Click += buttonDirections_Click;
             // 
             // FormMain
             // 

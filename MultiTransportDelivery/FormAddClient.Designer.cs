@@ -143,9 +143,9 @@
             label5.Location = new Point(18, 173);
             label5.Margin = new Padding(4, 0, 4, 0);
             label5.Name = "label5";
-            label5.Size = new Size(65, 15);
+            label5.Size = new Size(101, 15);
             label5.TabIndex = 10;
-            label5.Text = "Ном. тел.:";
+            label5.Text = "Ном. телефона:";
             // 
             // maskedTextBoxPhone
             // 
