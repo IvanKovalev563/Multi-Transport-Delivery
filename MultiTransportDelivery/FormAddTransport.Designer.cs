@@ -34,7 +34,8 @@
             buttonCancel = new Button();
             buttonAccept = new Button();
             label5 = new Label();
-            textBoxPrice = new TextBox();
+            numericUpDownPrice = new NumericUpDown();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownPrice).BeginInit();
             SuspendLayout();
             // 
             // label2
@@ -103,22 +104,23 @@
             label5.TabIndex = 23;
             label5.Text = "Стоимость (1 км/тонна):";
             // 
-            // textBoxPrice
+            // numericUpDownPrice
             // 
-            textBoxPrice.Location = new Point(180, 107);
-            textBoxPrice.Margin = new Padding(4, 3, 4, 3);
-            textBoxPrice.MaxLength = 12;
-            textBoxPrice.Name = "textBoxPrice";
-            textBoxPrice.Size = new Size(213, 23);
-            textBoxPrice.TabIndex = 24;
-            textBoxPrice.KeyPress += textBoxPrice_KeyPress;
+            numericUpDownPrice.DecimalPlaces = 1;
+            numericUpDownPrice.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            numericUpDownPrice.Increment = new decimal(new int[] { 1, 0, 0, 65536 });
+            numericUpDownPrice.Location = new Point(180, 106);
+            numericUpDownPrice.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
+            numericUpDownPrice.Name = "numericUpDownPrice";
+            numericUpDownPrice.Size = new Size(214, 25);
+            numericUpDownPrice.TabIndex = 24;
             // 
             // FormAddTransport
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(406, 262);
-            Controls.Add(textBoxPrice);
+            Controls.Add(numericUpDownPrice);
             Controls.Add(label5);
             Controls.Add(label2);
             Controls.Add(label1);
@@ -128,6 +130,7 @@
             FormBorderStyle = FormBorderStyle.Fixed3D;
             Name = "FormAddTransport";
             Text = "FormAddTransport";
+            ((System.ComponentModel.ISupportInitialize)numericUpDownPrice).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -139,6 +142,6 @@
         private Button buttonCancel;
         private Button buttonAccept;
         private Label label5;
-        private TextBox textBoxPrice;
+        private NumericUpDown numericUpDownPrice;
     }
 }

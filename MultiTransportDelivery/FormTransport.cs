@@ -22,7 +22,7 @@ namespace MultiTransportDelivery
         }
         private void loadTable()
         {
-            List<ListViewItem> items = DataTransport.getTransport();
+            List<ListViewItem> items = DataTransport.getTransport(-1);
             listViewTransport.Items.Clear();
 
             if (items.Count > 0)

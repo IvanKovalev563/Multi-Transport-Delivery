@@ -28,24 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
-            textBoxPrice = new TextBox();
             label5 = new Label();
             label2 = new Label();
             label1 = new Label();
             textBoxName = new TextBox();
             buttonCancel = new Button();
             buttonAccept = new Button();
+            numericUpDownPrice = new NumericUpDown();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownPrice).BeginInit();
             SuspendLayout();
-            // 
-            // textBoxPrice
-            // 
-            textBoxPrice.Location = new Point(180, 107);
-            textBoxPrice.Margin = new Padding(4, 3, 4, 3);
-            textBoxPrice.MaxLength = 12;
-            textBoxPrice.Name = "textBoxPrice";
-            textBoxPrice.Size = new Size(213, 23);
-            textBoxPrice.TabIndex = 31;
-            textBoxPrice.KeyPress += textBoxPrice_KeyPress;
             // 
             // label5
             // 
@@ -113,12 +104,23 @@
             buttonAccept.UseVisualStyleBackColor = true;
             buttonAccept.Click += buttonAccept_Click;
             // 
+            // numericUpDownPrice
+            // 
+            numericUpDownPrice.DecimalPlaces = 1;
+            numericUpDownPrice.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            numericUpDownPrice.Increment = new decimal(new int[] { 1, 0, 0, 65536 });
+            numericUpDownPrice.Location = new Point(179, 106);
+            numericUpDownPrice.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
+            numericUpDownPrice.Name = "numericUpDownPrice";
+            numericUpDownPrice.Size = new Size(214, 25);
+            numericUpDownPrice.TabIndex = 31;
+            // 
             // FormEditTransport
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(410, 266);
-            Controls.Add(textBoxPrice);
+            Controls.Add(numericUpDownPrice);
             Controls.Add(label5);
             Controls.Add(label2);
             Controls.Add(label1);
@@ -128,18 +130,18 @@
             FormBorderStyle = FormBorderStyle.Fixed3D;
             Name = "FormEditTransport";
             Text = "FormEditTransport";
+            ((System.ComponentModel.ISupportInitialize)numericUpDownPrice).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
-
-        private TextBox textBoxPrice;
         private Label label5;
         private Label label2;
         private Label label1;
         private TextBox textBoxName;
         private Button buttonCancel;
         private Button buttonAccept;
+        private NumericUpDown numericUpDownPrice;
     }
 }

@@ -35,6 +35,7 @@
             columnHeaderClient = new ColumnHeader();
             columnHeaderTransport = new ColumnHeader();
             columnHeaderDirection = new ColumnHeader();
+            columnHeaderDistance = new ColumnHeader();
             columnHeaderDate = new ColumnHeader();
             columnHeaderWeight = new ColumnHeader();
             columnHeaderCost = new ColumnHeader();
@@ -46,12 +47,14 @@
             buttonClients = new Button();
             buttonTransport = new Button();
             buttonDirections = new Button();
+            заказыToolStripMenuItem = new ToolStripMenuItem();
+            сведенияОЗаказахToolStripMenuItem = new ToolStripMenuItem();
             menuStrip.SuspendLayout();
             SuspendLayout();
             // 
             // menuStrip
             // 
-            menuStrip.Items.AddRange(new ToolStripItem[] { справкаToolStripMenuItem });
+            menuStrip.Items.AddRange(new ToolStripItem[] { справкаToolStripMenuItem, заказыToolStripMenuItem });
             menuStrip.Location = new Point(0, 0);
             menuStrip.Name = "menuStrip";
             menuStrip.Size = new Size(800, 24);
@@ -76,7 +79,7 @@
             // 
             listViewOrders.Alignment = ListViewAlignment.Left;
             listViewOrders.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            listViewOrders.Columns.AddRange(new ColumnHeader[] { columnHeaderClient, columnHeaderTransport, columnHeaderDirection, columnHeaderDate, columnHeaderWeight, columnHeaderCost, columnHeaderStatus });
+            listViewOrders.Columns.AddRange(new ColumnHeader[] { columnHeaderClient, columnHeaderTransport, columnHeaderDirection, columnHeaderDistance, columnHeaderDate, columnHeaderWeight, columnHeaderCost, columnHeaderStatus });
             listViewOrders.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
             listViewOrders.FullRowSelect = true;
             listViewOrders.Location = new Point(183, 24);
@@ -85,6 +88,7 @@
             listViewOrders.TabIndex = 1;
             listViewOrders.UseCompatibleStateImageBehavior = false;
             listViewOrders.View = View.Details;
+            listViewOrders.SelectedIndexChanged += listViewOrders_SelectedIndexChanged;
             // 
             // columnHeaderClient
             // 
@@ -97,6 +101,10 @@
             // columnHeaderDirection
             // 
             columnHeaderDirection.Text = "Направление";
+            // 
+            // columnHeaderDistance
+            // 
+            columnHeaderDistance.Text = "Растояние";
             // 
             // columnHeaderDate
             // 
@@ -134,6 +142,7 @@
             buttonEditOrder.TabIndex = 3;
             buttonEditOrder.Text = "Редактировать заказ";
             buttonEditOrder.UseVisualStyleBackColor = true;
+            buttonEditOrder.Click += buttonEditOrder_Click;
             // 
             // buttonDelOrder
             // 
@@ -144,6 +153,7 @@
             buttonDelOrder.TabIndex = 4;
             buttonDelOrder.Text = "Удалить заказ";
             buttonDelOrder.UseVisualStyleBackColor = true;
+            buttonDelOrder.Click += buttonDelOrder_Click;
             // 
             // labelEmptyOrders
             // 
@@ -191,6 +201,20 @@
             buttonDirections.UseVisualStyleBackColor = true;
             buttonDirections.Click += buttonDirections_Click;
             // 
+            // заказыToolStripMenuItem
+            // 
+            заказыToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { сведенияОЗаказахToolStripMenuItem });
+            заказыToolStripMenuItem.Name = "заказыToolStripMenuItem";
+            заказыToolStripMenuItem.Size = new Size(58, 20);
+            заказыToolStripMenuItem.Text = "Заказы";
+            // 
+            // сведенияОЗаказахToolStripMenuItem
+            // 
+            сведенияОЗаказахToolStripMenuItem.Name = "сведенияОЗаказахToolStripMenuItem";
+            сведенияОЗаказахToolStripMenuItem.Size = new Size(180, 22);
+            сведенияОЗаказахToolStripMenuItem.Text = "Сведения о заказах";
+            сведенияОЗаказахToolStripMenuItem.Click += сведенияОЗаказахToolStripMenuItem_Click;
+            // 
             // FormMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -237,5 +261,8 @@
         private Button buttonClients;
         private Button buttonTransport;
         private Button buttonDirections;
+        private ColumnHeader columnHeaderDistance;
+        private ToolStripMenuItem заказыToolStripMenuItem;
+        private ToolStripMenuItem сведенияОЗаказахToolStripMenuItem;
     }
 }

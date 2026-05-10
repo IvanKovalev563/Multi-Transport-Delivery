@@ -142,14 +142,16 @@ namespace DataAccess
 
     public static class DataTransport
     {
-        public static List<ListViewItem> getTransport()
+        public static List<ListViewItem> getTransport(int id)
         {
             List<ListViewItem> items = new List<ListViewItem>();
             try
             {
                 using (var conn = DatabaseAccess.connectDB())
                 {
-                    using (var cmd = new MySqlCommand($"select * from transport", conn))
+                    string sql = "select * from transport";
+                    if (id > -1) sql += $" where transport_id = {id}";
+                    using (var cmd = new MySqlCommand(sql, conn))
                     {
                         using (var reader = cmd.ExecuteReader())
                         {
@@ -257,6 +259,37 @@ namespace DataAccess
                                 "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
+        }
+        public static List<ListViewItem> getNeededTransport()
+        {
+            List<ListViewItem> items = new List<ListViewItem>();
+            try
+            {
+                using (var conn = DatabaseAccess.connectDB())
+                {
+                    string sql = "select name, count(order_id) as count from transport, `order`" +
+                        " where transport.transport_id = order.transport_id and status not like 'Доставлен'" +
+                        " group by name";
+                    using (var cmd = new MySqlCommand(sql, conn))
+                    {
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                ListViewItem item = new ListViewItem(reader["name"].ToString());
+                                item.SubItems.Add(reader["count"].ToString());
+
+                                items.Add(item);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка получения данных из transport: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            return items;
         }
     }
 
@@ -375,6 +408,172 @@ namespace DataAccess
                                 "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
+        }
+    }
+
+    public static class DataOrders
+    {
+        public static List<ListViewItem> getOrders()
+        {
+            List<ListViewItem> items = new List<ListViewItem>();
+            try
+            {
+                using (var conn = DatabaseAccess.connectDB())
+                {
+                    using (var cmd = new MySqlCommand($"SELECT o.order_id, o.order_date, o.cargo_weight, o.distance, o.cost, o.status, c.full_name AS name, c.phone AS phone, t.name AS transport, d.name AS direction" +
+                        $" FROM `order` o" +
+                        $" LEFT JOIN client c ON o.client_id = c.client_id" +
+                        $" LEFT JOIN transport t ON o.transport_id = t.transport_id" +
+                        $" LEFT JOIN direction d ON o.direction_id = d.direction_id;", conn))
+                    {
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                ListViewItem item = new ListViewItem(reader["name"].ToString());
+                                item.SubItems.Add(reader["transport"].ToString());
+                                item.SubItems.Add(reader["direction"].ToString());
+                                item.SubItems.Add(reader["distance"].ToString());
+                                item.SubItems.Add(reader["order_date"].ToString());
+                                item.SubItems.Add(reader["cargo_weight"].ToString());
+                                item.SubItems.Add(reader["cost"].ToString());
+                                item.SubItems.Add(reader["status"].ToString());
+                                item.SubItems.Add(reader["order_id"].ToString());
+
+                                items.Add(item);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка получения данных из Order: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            return items;
+        }
+        public static bool addOrder(int clientId, int transportId, int directionId, float weight, float distance, float cost, string status = "Новый")
+        {
+            DateTime orderDate = DateTime.Now;
+            try
+            {
+                using (var conn = DatabaseAccess.connectDB())
+                {
+                    string sql = @"INSERT INTO `order` 
+                (client_id, transport_id, direction_id, order_date, 
+                 cargo_weight, distance, cost, status)
+                VALUES (@clientId, @transportId, @directionId, @orderDate,
+                        @weight, @distance, @cost, @status)";
+
+                    using (var cmd = new MySqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@clientId", clientId);
+                        cmd.Parameters.AddWithValue("@transportId", transportId);
+                        cmd.Parameters.AddWithValue("@directionId", directionId);
+                        cmd.Parameters.AddWithValue("@orderDate", orderDate);
+                        cmd.Parameters.AddWithValue("@weight", weight);
+                        cmd.Parameters.AddWithValue("@distance", distance);
+                        cmd.Parameters.AddWithValue("@cost", cost);
+                        cmd.Parameters.AddWithValue("@status", status);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка добавления заказа: {ex.Message}", "Ошибка",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+        }
+        public static void delOrder(int id)
+        {
+            try
+            {
+                using (var conn = DatabaseAccess.connectDB())
+                {
+                    using (var cmd = new MySqlCommand($"delete from `order` where order_id={id}", conn))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (MySqlException ex) when (ex.Number == 1451)
+            {
+                MessageBox.Show("Невозможно удалить заказ: на него есть платежи.",
+                                "Удаление невозможно", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка удаления данных из Order: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        public static bool editOrder(int clientId, int transportId, int directionId, float weight, float distance, float cost, string status, ListViewItem oldOrder)
+        {
+            try
+            {
+                using (var conn = DatabaseAccess.connectDB())
+                {
+                    string sql = @"UPDATE `order` SET 
+                                client_id = @clientId,
+                                transport_id = @transportId,
+                                direction_id = @directionId,
+                                cargo_weight = @weight,
+                                distance = @distance,
+                                cost = @cost,
+                                status = @status
+                                WHERE order_id = @orderId";
+
+                    using (var cmd = new MySqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@clientId", clientId);
+                        cmd.Parameters.AddWithValue("@transportId", transportId);
+                        cmd.Parameters.AddWithValue("@directionId", directionId);
+                        cmd.Parameters.AddWithValue("@weight", weight);
+                        cmd.Parameters.AddWithValue("@distance", distance);
+                        cmd.Parameters.AddWithValue("@cost", cost);
+                        cmd.Parameters.AddWithValue("@status", status);
+                        cmd.Parameters.AddWithValue("@orderId", oldOrder.SubItems[8].Text);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка изменения заказа: {ex.Message}",
+                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+        }
+        public static int getOrdersCount(bool isAcitve)
+        {
+            int count = 0;
+            try
+            {
+                using (var conn = DatabaseAccess.connectDB())
+                {
+                    string sql = $"SELECT count(order_id) as count from `order`";
+                    if (isAcitve) sql += " where status not like 'Доставлен'";
+
+                    using (var cmd = new MySqlCommand(sql, conn))
+                    {
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                count = int.Parse(reader["count"].ToString());
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка получения информации о данных из Order: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            return count;
         }
     }
 }

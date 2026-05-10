@@ -19,7 +19,7 @@ namespace MultiTransportDelivery
             InitializeComponent();
             this.oldTransport = oldTransport;
             textBoxName.Text = oldTransport.SubItems[0].Text;
-            textBoxPrice.Text = oldTransport.SubItems[1].Text;
+            numericUpDownPrice.Value = decimal.Parse(oldTransport.SubItems[1].Text);
         }
 
         private void textBoxPrice_KeyPress(object sender, KeyPressEventArgs e)
@@ -35,11 +35,11 @@ namespace MultiTransportDelivery
         }
         private void buttonAccept_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrWhiteSpace(textBoxName.Text) && !string.IsNullOrWhiteSpace(textBoxPrice.Text))
+            if (!string.IsNullOrWhiteSpace(textBoxName.Text))
             {
-                if (!DataTransport.isTransportDuplicate(textBoxName.Text, textBoxPrice.Text))
+                if (!DataTransport.isTransportDuplicate(textBoxName.Text, numericUpDownPrice.Value.ToString()))
                 {
-                    if (DataTransport.editTransport(textBoxName.Text, textBoxPrice.Text, oldTransport))
+                    if (DataTransport.editTransport(textBoxName.Text, numericUpDownPrice.Value.ToString(), oldTransport))
                     {
                         this.Close();
                     }

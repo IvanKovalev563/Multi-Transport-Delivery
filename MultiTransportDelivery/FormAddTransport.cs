@@ -30,11 +30,11 @@ namespace MultiTransportDelivery
         }
         private void buttonAccept_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrWhiteSpace(textBoxName.Text) && !string.IsNullOrWhiteSpace(textBoxPrice.Text))
+            if (!string.IsNullOrWhiteSpace(textBoxName.Text))
             {
-                if (!DataTransport.isTransportDuplicate(textBoxName.Text, textBoxPrice.Text))
+                if (!DataTransport.isTransportDuplicate(textBoxName.Text, numericUpDownPrice.Value.ToString()))
                 {
-                    if (DataTransport.addTransport(textBoxName.Text, textBoxPrice.Text))
+                    if (DataTransport.addTransport(textBoxName.Text, numericUpDownPrice.Value.ToString()))
                     {
                         this.Close();
                     }
