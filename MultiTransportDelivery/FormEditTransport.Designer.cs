@@ -76,9 +76,9 @@
             label1.Location = new Point(13, 9);
             label1.Margin = new Padding(4, 0, 4, 0);
             label1.Name = "label1";
-            label1.Size = new Size(256, 25);
+            label1.Size = new Size(299, 25);
             label1.TabIndex = 28;
-            label1.Text = "Добавление транспорта";
+            label1.Text = "Редактирование транспорта";
             // 
             // textBoxName
             // 

@@ -17,14 +17,14 @@ namespace DataAccess
 
     public static class DataClient
     {
-        public static List<ListViewItem> getClients(string searchName)
+        public static List<ListViewItem> getClients()
         {
             List<ListViewItem> items = new List<ListViewItem>();
             try
             {
                 using (var conn = DatabaseAccess.connectDB())
                 {
-                    using (var cmd = new MySqlCommand($"select * from client where full_name like '{searchName}%'", conn))
+                    using (var cmd = new MySqlCommand($"select * from client", conn))
                     {
                         using (var reader = cmd.ExecuteReader())
                         {
@@ -142,7 +142,7 @@ namespace DataAccess
 
     public static class DataTransport
     {
-        public static List<ListViewItem> getTransport(string searchName)
+        public static List<ListViewItem> getTransport()
         {
             List<ListViewItem> items = new List<ListViewItem>();
             try
@@ -177,7 +177,7 @@ namespace DataAccess
             {
                 using (var conn = DatabaseAccess.connectDB())
                 {
-                    using (var cmd = new MySqlCommand($"insert into transport (name, price_per_km) values ('{Name}', '{Price}')", conn))
+                    using (var cmd = new MySqlCommand($"insert into transport (name, price_per_km) values ('{Name}', {Price})", conn))
                     {
                         cmd.ExecuteNonQuery();
                     }
@@ -204,7 +204,7 @@ namespace DataAccess
             }
             catch (MySqlException ex) when (ex.Number == 1451)
             {
-                MessageBox.Show("Невозможно удалить транспорт: у него есть оформленные заказы.\nСначала удалите или переназначьте заказы этого клиента.",
+                MessageBox.Show("Невозможно удалить транспорт: с ним есть оформленные заказы.",
                                 "Удаление невозможно", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             catch (Exception ex)
@@ -219,9 +219,9 @@ namespace DataAccess
                 using (var conn = DatabaseAccess.connectDB())
                 {
                     using (var cmd = new MySqlCommand(
-                        $"update client" +
-                        $" set name = '{Name}', price_per_km = '{Price}'" +
-                        $" where client_id={oldTransport.SubItems[2].Text}", conn))
+                        $"update transport" +
+                        $" set name = '{Name}', price_per_km = {Price}" +
+                        $" where transport_id={oldTransport.SubItems[2].Text}", conn))
                     {
                         cmd.ExecuteNonQuery();
                     }
@@ -254,6 +254,124 @@ namespace DataAccess
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка при проверке дубликата транспорта: {ex.Message}",
+                                "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+        }
+    }
+
+    public static class DataDirections
+    {
+        public static List<ListViewItem> getDirections()
+        {
+            List<ListViewItem> items = new List<ListViewItem>();
+            try
+            {
+                using (var conn = DatabaseAccess.connectDB())
+                {
+                    using (var cmd = new MySqlCommand($"select * from direction", conn))
+                    {
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                ListViewItem item = new ListViewItem(reader["name"].ToString());
+                                item.SubItems.Add(reader["direction_id"].ToString());
+
+                                items.Add(item);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка получения данных из direction: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            return items;
+        }
+        public static bool addDirection(string Name)
+        {
+            try
+            {
+                using (var conn = DatabaseAccess.connectDB())
+                {
+                    using (var cmd = new MySqlCommand($"insert into direction (name) values ('{Name}')", conn))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка добавления данных в direction: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+            return true;
+        }
+        public static void delDirection(int id)
+        {
+            try
+            {
+                using (var conn = DatabaseAccess.connectDB())
+                {
+                    using (var cmd = new MySqlCommand($"delete from direction where (direction_id={id})", conn))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (MySqlException ex) when (ex.Number == 1451)
+            {
+                MessageBox.Show("Невозможно удалить направление: с ним есть оформленные заказы.",
+                                "Удаление невозможно", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка удаления данных из direction: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        public static bool editDirection(string Name, ListViewItem oldDirection)
+        {
+            try
+            {
+                using (var conn = DatabaseAccess.connectDB())
+                {
+                    using (var cmd = new MySqlCommand(
+                        $"update direction" +
+                        $" set name = '{Name}'" +
+                        $" where direction_id={oldDirection.SubItems[1].Text}", conn))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка изменения данных в direction: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+            return true;
+        }
+        public static bool isDirectionDuplicate(string Name)
+        {
+            try
+            {
+                using (var conn = DatabaseAccess.connectDB())
+                {
+                    using (var cmd = new MySqlCommand(@"SELECT COUNT(*) FROM direction
+                           WHERE name = @n", conn))
+                    {
+                        cmd.Parameters.AddWithValue("@n", Name);
+
+                        int count = Convert.ToInt32(cmd.ExecuteScalar());
+                        return count > 0;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при проверке дубликата направления: {ex.Message}",
                                 "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }

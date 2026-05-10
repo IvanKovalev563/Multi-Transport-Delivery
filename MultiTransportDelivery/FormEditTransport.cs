@@ -18,6 +18,8 @@ namespace MultiTransportDelivery
         {
             InitializeComponent();
             this.oldTransport = oldTransport;
+            textBoxName.Text = oldTransport.SubItems[0].Text;
+            textBoxPrice.Text = oldTransport.SubItems[1].Text;
         }
 
         private void textBoxPrice_KeyPress(object sender, KeyPressEventArgs e)

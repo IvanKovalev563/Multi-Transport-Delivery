@@ -123,6 +123,7 @@
             buttonAddOrder.TabIndex = 2;
             buttonAddOrder.Text = "Создать заказ";
             buttonAddOrder.UseVisualStyleBackColor = true;
+            buttonAddOrder.Click += buttonAddOrder_Click;
             // 
             // buttonEditOrder
             // 

@@ -24,7 +24,7 @@ namespace MultiTransportDelivery
 
         private void loadTable()
         {
-            List<ListViewItem> items = DataClient.getClients("");
+            List<ListViewItem> items = DataClient.getClients();
             listViewClients.Items.Clear();
 
             if (items.Count > 0)

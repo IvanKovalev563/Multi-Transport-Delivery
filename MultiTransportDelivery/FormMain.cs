@@ -57,6 +57,12 @@ namespace MultiTransportDelivery
 
         private void buttonDirections_Click(object sender, EventArgs e)
         {
+            FormDirections directions = new FormDirections();
+            directions.ShowDialog();
+        }
+
+        private void buttonAddOrder_Click(object sender, EventArgs e)
+        {
 
         }
     }
