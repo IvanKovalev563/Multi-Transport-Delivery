@@ -161,7 +161,7 @@ namespace MultiTransportDelivery
             if (MessageBox.Show("Вы уверены что хотите удалить этот элемент без возможности восстановления?", "Вы уверены?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 ListViewItem item = listViewOrders.SelectedItems[0];
-                DataOrders.delOrder(Int32.Parse(item.SubItems[8].Text));
+                DataOrders.delOrder(Int32.Parse(item.SubItems[10].Text));
                 loadTable();
             }
             listViewOrders_SelectedIndexChanged(null, null);

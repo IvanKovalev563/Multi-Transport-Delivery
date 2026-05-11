@@ -308,7 +308,6 @@
             Name = "FormMain";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Multi Transport Delivery";
-            Load += FormMain_Load;
             ResizeEnd += FormMain_ResizeEnd;
             menuStrip.ResumeLayout(false);
             menuStrip.PerformLayout();
