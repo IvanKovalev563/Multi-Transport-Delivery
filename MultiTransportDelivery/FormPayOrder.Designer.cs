@@ -73,9 +73,9 @@
             // 
             // numericUpDownPay
             // 
-            numericUpDownPay.DecimalPlaces = 1;
+            numericUpDownPay.DecimalPlaces = 2;
             numericUpDownPay.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            numericUpDownPay.Increment = new decimal(new int[] { 1, 0, 0, 65536 });
+            numericUpDownPay.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
             numericUpDownPay.Location = new Point(131, 60);
             numericUpDownPay.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
             numericUpDownPay.Name = "numericUpDownPay";
