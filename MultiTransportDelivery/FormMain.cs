@@ -20,7 +20,7 @@ namespace MultiTransportDelivery
 
         private void loadTable()
         {
-            List<ListViewItem> items = DataOrders.getOrders();
+            List<ListViewItem> items = DataOrders.getOrders(-1);
             listViewOrders.Items.Clear();
 
             if (items.Count > 0)
@@ -46,7 +46,7 @@ namespace MultiTransportDelivery
         private void FormMain_ResizeEnd(object sender, EventArgs e)
         {
             int totalWidth_order = listViewOrders.ClientSize.Width;
-            int columnCount_order = 8;
+            int columnCount_order = 9;
             int colWidth_order = totalWidth_order / columnCount_order;
             listViewOrders.BeginUpdate();
             for (int i = 0; i < columnCount_order; i++)
@@ -69,11 +69,13 @@ namespace MultiTransportDelivery
             {
                 buttonEditOrder.Enabled = true;
                 buttonDelOrder.Enabled = true;
+                buttonPayOrder.Enabled = true;
             }
             else
             {
                 buttonEditOrder.Enabled = false;
                 buttonDelOrder.Enabled = false;
+                buttonPayOrder.Enabled = false;
             }
         }
 
@@ -124,6 +126,19 @@ namespace MultiTransportDelivery
         {
             FormOrdersInfo formOrdersInfo = new FormOrdersInfo();
             formOrdersInfo.ShowDialog();
+        }
+
+        private void ñâåäåíèÿÎToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FormDebtors formDebtors = new FormDebtors();
+            formDebtors.ShowDialog();
+        }
+
+        private void buttonPayOrder_Click(object sender, EventArgs e)
+        {
+            FormPayOrder payOrder = new FormPayOrder(listViewOrders.SelectedItems[0]);
+            payOrder.ShowDialog();
+            loadTable();
         }
     }
 }

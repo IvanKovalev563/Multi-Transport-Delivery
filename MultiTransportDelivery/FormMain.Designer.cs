@@ -29,6 +29,9 @@
         private void InitializeComponent()
         {
             menuStrip = new MenuStrip();
+            заказыToolStripMenuItem = new ToolStripMenuItem();
+            сведенияОЗаказахToolStripMenuItem = new ToolStripMenuItem();
+            сведенияОToolStripMenuItem = new ToolStripMenuItem();
             справкаToolStripMenuItem = new ToolStripMenuItem();
             AboutToolStripMenuItem = new ToolStripMenuItem();
             listViewOrders = new ListView();
@@ -39,6 +42,7 @@
             columnHeaderDate = new ColumnHeader();
             columnHeaderWeight = new ColumnHeader();
             columnHeaderCost = new ColumnHeader();
+            columnHeaderPayAmount = new ColumnHeader();
             columnHeaderStatus = new ColumnHeader();
             buttonAddOrder = new Button();
             buttonEditOrder = new Button();
@@ -47,19 +51,39 @@
             buttonClients = new Button();
             buttonTransport = new Button();
             buttonDirections = new Button();
-            заказыToolStripMenuItem = new ToolStripMenuItem();
-            сведенияОЗаказахToolStripMenuItem = new ToolStripMenuItem();
+            buttonPayOrder = new Button();
             menuStrip.SuspendLayout();
             SuspendLayout();
             // 
             // menuStrip
             // 
-            menuStrip.Items.AddRange(new ToolStripItem[] { справкаToolStripMenuItem, заказыToolStripMenuItem });
+            menuStrip.Items.AddRange(new ToolStripItem[] { заказыToolStripMenuItem, справкаToolStripMenuItem });
             menuStrip.Location = new Point(0, 0);
             menuStrip.Name = "menuStrip";
             menuStrip.Size = new Size(800, 24);
             menuStrip.TabIndex = 0;
             menuStrip.Text = "menuStrip";
+            // 
+            // заказыToolStripMenuItem
+            // 
+            заказыToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { сведенияОЗаказахToolStripMenuItem, сведенияОToolStripMenuItem });
+            заказыToolStripMenuItem.Name = "заказыToolStripMenuItem";
+            заказыToolStripMenuItem.Size = new Size(58, 20);
+            заказыToolStripMenuItem.Text = "Заказы";
+            // 
+            // сведенияОЗаказахToolStripMenuItem
+            // 
+            сведенияОЗаказахToolStripMenuItem.Name = "сведенияОЗаказахToolStripMenuItem";
+            сведенияОЗаказахToolStripMenuItem.Size = new Size(200, 22);
+            сведенияОЗаказахToolStripMenuItem.Text = "Сведения о заказах";
+            сведенияОЗаказахToolStripMenuItem.Click += сведенияОЗаказахToolStripMenuItem_Click;
+            // 
+            // сведенияОToolStripMenuItem
+            // 
+            сведенияОToolStripMenuItem.Name = "сведенияОToolStripMenuItem";
+            сведенияОToolStripMenuItem.Size = new Size(200, 22);
+            сведенияОToolStripMenuItem.Text = "Сведения о должниках";
+            сведенияОToolStripMenuItem.Click += сведенияОToolStripMenuItem_Click;
             // 
             // справкаToolStripMenuItem
             // 
@@ -79,7 +103,7 @@
             // 
             listViewOrders.Alignment = ListViewAlignment.Left;
             listViewOrders.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            listViewOrders.Columns.AddRange(new ColumnHeader[] { columnHeaderClient, columnHeaderTransport, columnHeaderDirection, columnHeaderDistance, columnHeaderDate, columnHeaderWeight, columnHeaderCost, columnHeaderStatus });
+            listViewOrders.Columns.AddRange(new ColumnHeader[] { columnHeaderClient, columnHeaderTransport, columnHeaderDirection, columnHeaderDistance, columnHeaderDate, columnHeaderWeight, columnHeaderCost, columnHeaderPayAmount, columnHeaderStatus });
             listViewOrders.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
             listViewOrders.FullRowSelect = true;
             listViewOrders.Location = new Point(183, 24);
@@ -117,6 +141,10 @@
             // columnHeaderCost
             // 
             columnHeaderCost.Text = "Стоимость";
+            // 
+            // columnHeaderPayAmount
+            // 
+            columnHeaderPayAmount.Text = "Оплачено";
             // 
             // columnHeaderStatus
             // 
@@ -201,25 +229,23 @@
             buttonDirections.UseVisualStyleBackColor = true;
             buttonDirections.Click += buttonDirections_Click;
             // 
-            // заказыToolStripMenuItem
+            // buttonPayOrder
             // 
-            заказыToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { сведенияОЗаказахToolStripMenuItem });
-            заказыToolStripMenuItem.Name = "заказыToolStripMenuItem";
-            заказыToolStripMenuItem.Size = new Size(58, 20);
-            заказыToolStripMenuItem.Text = "Заказы";
-            // 
-            // сведенияОЗаказахToolStripMenuItem
-            // 
-            сведенияОЗаказахToolStripMenuItem.Name = "сведенияОЗаказахToolStripMenuItem";
-            сведенияОЗаказахToolStripMenuItem.Size = new Size(180, 22);
-            сведенияОЗаказахToolStripMenuItem.Text = "Сведения о заказах";
-            сведенияОЗаказахToolStripMenuItem.Click += сведенияОЗаказахToolStripMenuItem_Click;
+            buttonPayOrder.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            buttonPayOrder.Location = new Point(12, 126);
+            buttonPayOrder.Name = "buttonPayOrder";
+            buttonPayOrder.Size = new Size(165, 27);
+            buttonPayOrder.TabIndex = 9;
+            buttonPayOrder.Text = "Оплатить заказ";
+            buttonPayOrder.UseVisualStyleBackColor = true;
+            buttonPayOrder.Click += buttonPayOrder_Click;
             // 
             // FormMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(buttonPayOrder);
             Controls.Add(buttonDirections);
             Controls.Add(buttonTransport);
             Controls.Add(buttonClients);
@@ -264,5 +290,8 @@
         private ColumnHeader columnHeaderDistance;
         private ToolStripMenuItem заказыToolStripMenuItem;
         private ToolStripMenuItem сведенияОЗаказахToolStripMenuItem;
+        private Button buttonPayOrder;
+        private ToolStripMenuItem сведенияОToolStripMenuItem;
+        private ColumnHeader columnHeaderPayAmount;
     }
 }

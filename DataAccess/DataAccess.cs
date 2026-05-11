@@ -1,6 +1,9 @@
 ﻿using MySql.Data;
 using MySql.Data.MySqlClient;
+using MySqlX.XDevAPI;
 using System.Windows.Forms;
+using static Mysqlx.Crud.Order.Types;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace DataAccess
 {
@@ -413,32 +416,51 @@ namespace DataAccess
 
     public static class DataOrders
     {
-        public static List<ListViewItem> getOrders()
+        public static List<ListViewItem> getOrders(int clientID)
         {
             List<ListViewItem> items = new List<ListViewItem>();
             try
             {
                 using (var conn = DatabaseAccess.connectDB())
                 {
-                    using (var cmd = new MySqlCommand($"SELECT o.order_id, o.order_date, o.cargo_weight, o.distance, o.cost, o.status, c.full_name AS name, c.phone AS phone, t.name AS transport, d.name AS direction" +
-                        $" FROM `order` o" +
-                        $" LEFT JOIN client c ON o.client_id = c.client_id" +
-                        $" LEFT JOIN transport t ON o.transport_id = t.transport_id" +
-                        $" LEFT JOIN direction d ON o.direction_id = d.direction_id;", conn))
+                    string sql = @"
+                SELECT o.order_id, o.client_id, o.order_date, o.cargo_weight, o.distance, o.cost, o.status,
+                       c.full_name, c.phone,
+                       t.name AS transport, d.name AS direction,
+                       COALESCE(paid.total_paid, 0) AS paid_amount,
+                       o.cost - COALESCE(paid.total_paid, 0) AS debt
+                FROM `order` o
+                LEFT JOIN client c ON o.client_id = c.client_id
+                LEFT JOIN transport t ON o.transport_id = t.transport_id
+                LEFT JOIN direction d ON o.direction_id = d.direction_id
+                LEFT JOIN (
+                    SELECT order_id, SUM(amount) AS total_paid
+                    FROM payment
+                    WHERE order_id IS NOT NULL
+                    GROUP BY order_id
+                ) paid ON o.order_id = paid.order_id
+                WHERE @clientId = -1 OR o.client_id = @clientId
+                ORDER BY o.order_date DESC";
+
+                    using (var cmd = new MySqlCommand(sql, conn))
                     {
+                        cmd.Parameters.AddWithValue("@clientId", clientID);
                         using (var reader = cmd.ExecuteReader())
                         {
                             while (reader.Read())
                             {
-                                ListViewItem item = new ListViewItem(reader["name"].ToString());
-                                item.SubItems.Add(reader["transport"].ToString());
-                                item.SubItems.Add(reader["direction"].ToString());
-                                item.SubItems.Add(reader["distance"].ToString());
-                                item.SubItems.Add(reader["order_date"].ToString());
-                                item.SubItems.Add(reader["cargo_weight"].ToString());
-                                item.SubItems.Add(reader["cost"].ToString());
-                                item.SubItems.Add(reader["status"].ToString());
-                                item.SubItems.Add(reader["order_id"].ToString());
+                                ListViewItem item = new ListViewItem(reader["full_name"].ToString()); //0
+                                item.SubItems.Add(reader["transport"].ToString()); //1
+                                item.SubItems.Add(reader["direction"].ToString()); //2
+                                item.SubItems.Add(reader["distance"].ToString()); //3
+                                item.SubItems.Add(reader["order_date"].ToString()); //4
+                                item.SubItems.Add(reader["cargo_weight"].ToString()); //5
+                                item.SubItems.Add(reader["cost"].ToString()); //6
+                                item.SubItems.Add(Convert.ToDecimal(reader["paid_amount"]).ToString("F2")); //7
+                                item.SubItems.Add(reader["status"].ToString()); //8
+                                item.SubItems.Add(Convert.ToDecimal(reader["debt"]).ToString("F2")); //9
+                                item.SubItems.Add(reader["order_id"].ToString()); //10
+                                item.SubItems.Add(reader["client_id"].ToString()); //11
 
                                 items.Add(item);
                             }
@@ -448,7 +470,8 @@ namespace DataAccess
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка получения данных из Order: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Ошибка получения заказов: {ex.Message}",
+                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             return items;
         }
@@ -534,7 +557,7 @@ namespace DataAccess
                         cmd.Parameters.AddWithValue("@distance", distance);
                         cmd.Parameters.AddWithValue("@cost", cost);
                         cmd.Parameters.AddWithValue("@status", status);
-                        cmd.Parameters.AddWithValue("@orderId", oldOrder.SubItems[8].Text);
+                        cmd.Parameters.AddWithValue("@orderId", oldOrder.SubItems[10].Text);
                         cmd.ExecuteNonQuery();
                     }
                 }
@@ -574,6 +597,81 @@ namespace DataAccess
                 MessageBox.Show($"Ошибка получения информации о данных из Order: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             return count;
+        }
+    }
+
+    public static class DataPayments
+    {
+        public static List<ListViewItem> getDebtors()
+        {
+            List<ListViewItem> items = new List<ListViewItem>();
+            try
+            {
+                using (var conn = DatabaseAccess.connectDB())
+                {
+                    string sql = @"SELECT 
+                            c.client_id,
+                            c.full_name,
+                            COALESCE(SUM(o.cost), 0) - COALESCE(SUM(p.amount), 0) AS debt
+                          FROM client c
+                          LEFT JOIN `order` o 
+                            ON c.client_id = o.client_id AND o.status = 'Доставлен'
+                          LEFT JOIN payment p 
+                            ON c.client_id = p.client_id
+                          GROUP BY c.client_id, c.full_name
+                          HAVING debt > 0
+                          ORDER BY debt DESC";
+
+                    using (var cmd = new MySqlCommand(sql, conn))
+                    {
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                ListViewItem item = new ListViewItem(reader["full_name"].ToString());
+                                item.SubItems.Add(Convert.ToDecimal(reader["debt"]).ToString("F2"));
+                                item.SubItems.Add(reader["client_id"].ToString());
+
+                                items.Add(item);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка получения должников: {ex.Message}",
+                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            return items;
+        }
+        public static bool addPayment(int orderId, int clientId, float amount)
+        {
+            DateTime date = DateTime.Now;
+            try
+            {
+                using (var conn = DatabaseAccess.connectDB())
+                {
+                    string sql = @"insert into payment (client_id, order_id, amount, payment_date)
+                                    values (@clientId, @orderId, @amount, @date)";
+
+                    using (var cmd = new MySqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@clientId", clientId);
+                        cmd.Parameters.AddWithValue("@orderId", orderId);
+                        cmd.Parameters.AddWithValue("@date", date);
+                        cmd.Parameters.AddWithValue("@amount", amount);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка добавления оплаты: {ex.Message}", "Ошибка",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
         }
     }
 }
