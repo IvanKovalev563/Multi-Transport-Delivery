@@ -441,13 +441,23 @@ namespace DataAccess
                     ) paid ON o.order_id = paid.order_id
                     WHERE (@clientId = -1 OR o.client_id = @clientId)";
 
-                    if (dateSearch != DateTime.MinValue) sql += $" AND order_date between '{dateSearch:yyyy-MM-dd 00:00:00}' AND '{dateSearch:yyyy-MM-dd 23:59:59}'";
+                    if (dateSearch != DateTime.MinValue)
+                    {
+                        sql += " AND o.order_date >= @dateFrom AND o.order_date < @dateTo";
+                    }
+
                     if (directionSearch != -1) sql += $" AND d.direction_id = {directionSearch}";
+
                     sql += " ORDER BY o.order_date DESC";
 
                     using (var cmd = new MySqlCommand(sql, conn))
                     {
                         cmd.Parameters.AddWithValue("@clientId", clientID);
+                        if (dateSearch != DateTime.MinValue)
+                        {
+                            cmd.Parameters.AddWithValue("@dateFrom", dateSearch.Date);
+                            cmd.Parameters.AddWithValue("@dateTo", dateSearch.Date.AddDays(1));
+                        }
                         using (var reader = cmd.ExecuteReader())
                         {
                             while (reader.Read())
