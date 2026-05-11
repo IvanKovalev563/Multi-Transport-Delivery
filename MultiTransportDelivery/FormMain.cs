@@ -1,5 +1,7 @@
 using DataAccess;
 using Order_Manager;
+using System.ComponentModel;
+using System.Xml.Linq;
 
 namespace MultiTransportDelivery
 {
@@ -9,8 +11,10 @@ namespace MultiTransportDelivery
         {
             InitializeComponent();
             FormMain_ResizeEnd(null, null);
+            loadComboDirectionSearch();
             loadTable();
             listViewOrders_SelectedIndexChanged(null, null);
+            checkBoxDateSearch_CheckedChanged(null, null);
         }
 
         private void FormMain_Load(object sender, EventArgs e)
@@ -20,7 +24,13 @@ namespace MultiTransportDelivery
 
         private void loadTable()
         {
-            List<ListViewItem> items = DataOrders.getOrders(-1);
+            DateTime dateSearch = checkBoxDateSearch.Checked ? dateTimePickerSearch.Value : DateTime.MinValue;
+            int directionId = -1;
+            if (comboBoxDirectionSearch.SelectedItem is KeyValuePair<int, string> selectedPair)
+            {
+                directionId = selectedPair.Key;
+            }
+            List<ListViewItem> items = DataOrders.getOrders(-1, dateSearch, directionId);
             listViewOrders.Items.Clear();
 
             if (items.Count > 0)
@@ -34,6 +44,35 @@ namespace MultiTransportDelivery
             else
             {
                 labelEmptyOrders.Visible = true;
+            }
+        }
+
+        private void loadComboDirectionSearch()
+        {
+            List<ListViewItem> items = DataDirections.getDirections();
+
+            comboBoxDirectionSearch.DataSource = null;
+
+            comboBoxDirectionSearch.Items.Clear();
+            comboBoxDirectionSearch.DropDownStyle = ComboBoxStyle.DropDownList;
+
+            if (items.Count > 0)
+            {
+                var dict = new Dictionary<int, string>();
+
+                dict.Add(-1, "Все");
+                foreach (ListViewItem item in items)
+                {
+                    int id = Convert.ToInt32(item.SubItems[1].Text);
+                    string name = item.SubItems[0].Text;
+                    dict.Add(id, name);
+                }
+
+                comboBoxDirectionSearch.DataSource = new BindingSource(dict, null);
+                comboBoxDirectionSearch.DisplayMember = "Value";
+                comboBoxDirectionSearch.ValueMember = "Key";
+
+                comboBoxDirectionSearch.SelectedIndex = 0;
             }
         }
 
@@ -98,6 +137,7 @@ namespace MultiTransportDelivery
             FormDirections directions = new FormDirections();
             directions.ShowDialog();
             listViewOrders_SelectedIndexChanged(null, null);
+            loadComboDirectionSearch();
         }
 
         private void buttonAddOrder_Click(object sender, EventArgs e)
@@ -147,6 +187,29 @@ namespace MultiTransportDelivery
             payOrder.ShowDialog();
             loadTable();
             listViewOrders_SelectedIndexChanged(null, null);
+        }
+
+        private void checkBoxDateSearch_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxDateSearch.Checked)
+            {
+                dateTimePickerSearch.Enabled = true;
+            }
+            else
+            {
+                dateTimePickerSearch.Enabled = false;
+            }
+            loadTable();
+        }
+
+        private void dateTimePickerSearch_ValueChanged(object sender, EventArgs e)
+        {
+            loadTable();
+        }
+
+        private void comboBoxDirectionSearch_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            loadTable();
         }
     }
 }

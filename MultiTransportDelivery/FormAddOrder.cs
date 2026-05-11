@@ -133,5 +133,10 @@ namespace MultiTransportDelivery
                 MessageBox.Show("Поля: Клиент, Транспорт, Направление, Расстояние, Вес обязательно должны быть заполнены!", "Внимание", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
+
+        private void buttonCancel_Click_1(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }

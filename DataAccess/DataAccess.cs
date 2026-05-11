@@ -416,7 +416,7 @@ namespace DataAccess
 
     public static class DataOrders
     {
-        public static List<ListViewItem> getOrders(int clientID)
+        public static List<ListViewItem> getOrders(int clientID, DateTime dateSearch, int directionSearch)
         {
             List<ListViewItem> items = new List<ListViewItem>();
             try
@@ -424,23 +424,26 @@ namespace DataAccess
                 using (var conn = DatabaseAccess.connectDB())
                 {
                     string sql = @"
-                SELECT o.order_id, o.client_id, o.order_date, o.cargo_weight, o.distance, o.cost, o.status,
-                       c.full_name, c.phone,
-                       t.name AS transport, d.name AS direction,
-                       COALESCE(paid.total_paid, 0) AS paid_amount,
-                       o.cost - COALESCE(paid.total_paid, 0) AS debt
-                FROM `order` o
-                LEFT JOIN client c ON o.client_id = c.client_id
-                LEFT JOIN transport t ON o.transport_id = t.transport_id
-                LEFT JOIN direction d ON o.direction_id = d.direction_id
-                LEFT JOIN (
-                    SELECT order_id, SUM(amount) AS total_paid
-                    FROM payment
-                    WHERE order_id IS NOT NULL
-                    GROUP BY order_id
-                ) paid ON o.order_id = paid.order_id
-                WHERE @clientId = -1 OR o.client_id = @clientId
-                ORDER BY o.order_date DESC";
+                    SELECT o.order_id, o.client_id, o.order_date, o.cargo_weight, o.distance, o.cost, o.status,
+                           c.full_name, c.phone,
+                           t.name AS transport, d.name AS direction,
+                           COALESCE(paid.total_paid, 0) AS paid_amount,
+                           o.cost - COALESCE(paid.total_paid, 0) AS debt
+                    FROM `order` o
+                    LEFT JOIN client c ON o.client_id = c.client_id
+                    LEFT JOIN transport t ON o.transport_id = t.transport_id
+                    LEFT JOIN direction d ON o.direction_id = d.direction_id
+                    LEFT JOIN (
+                        SELECT order_id, SUM(amount) AS total_paid
+                        FROM payment
+                        WHERE order_id IS NOT NULL
+                        GROUP BY order_id
+                    ) paid ON o.order_id = paid.order_id
+                    WHERE (@clientId = -1 OR o.client_id = @clientId)";
+
+                    if (dateSearch != DateTime.MinValue) sql += $" AND order_date between '{dateSearch:yyyy-MM-dd 00:00:00}' AND '{dateSearch:yyyy-MM-dd 23:59:59}'";
+                    if (directionSearch != -1) sql += $" AND d.direction_id = {directionSearch}";
+                    sql += " ORDER BY o.order_date DESC";
 
                     using (var cmd = new MySqlCommand(sql, conn))
                     {

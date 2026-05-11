@@ -52,6 +52,10 @@
             buttonTransport = new Button();
             buttonDirections = new Button();
             buttonPayOrder = new Button();
+            dateTimePickerSearch = new DateTimePicker();
+            checkBoxDateSearch = new CheckBox();
+            comboBoxDirectionSearch = new ComboBox();
+            label1 = new Label();
             menuStrip.SuspendLayout();
             SuspendLayout();
             // 
@@ -240,11 +244,56 @@
             buttonPayOrder.UseVisualStyleBackColor = true;
             buttonPayOrder.Click += buttonPayOrder_Click;
             // 
+            // dateTimePickerSearch
+            // 
+            dateTimePickerSearch.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            dateTimePickerSearch.Location = new Point(12, 251);
+            dateTimePickerSearch.Name = "dateTimePickerSearch";
+            dateTimePickerSearch.Size = new Size(165, 25);
+            dateTimePickerSearch.TabIndex = 10;
+            dateTimePickerSearch.ValueChanged += dateTimePickerSearch_ValueChanged;
+            // 
+            // checkBoxDateSearch
+            // 
+            checkBoxDateSearch.AutoSize = true;
+            checkBoxDateSearch.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            checkBoxDateSearch.Location = new Point(12, 224);
+            checkBoxDateSearch.Name = "checkBoxDateSearch";
+            checkBoxDateSearch.Size = new Size(112, 21);
+            checkBoxDateSearch.TabIndex = 11;
+            checkBoxDateSearch.Text = "Поиск до дате";
+            checkBoxDateSearch.UseVisualStyleBackColor = true;
+            checkBoxDateSearch.CheckedChanged += checkBoxDateSearch_CheckedChanged;
+            // 
+            // comboBoxDirectionSearch
+            // 
+            comboBoxDirectionSearch.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            comboBoxDirectionSearch.FormattingEnabled = true;
+            comboBoxDirectionSearch.Location = new Point(12, 193);
+            comboBoxDirectionSearch.Name = "comboBoxDirectionSearch";
+            comboBoxDirectionSearch.Size = new Size(165, 25);
+            comboBoxDirectionSearch.TabIndex = 12;
+            comboBoxDirectionSearch.SelectedIndexChanged += comboBoxDirectionSearch_SelectedIndexChanged;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label1.Location = new Point(12, 173);
+            label1.Name = "label1";
+            label1.Size = new Size(136, 17);
+            label1.TabIndex = 13;
+            label1.Text = "Направление поиска:";
+            // 
             // FormMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(label1);
+            Controls.Add(comboBoxDirectionSearch);
+            Controls.Add(checkBoxDateSearch);
+            Controls.Add(dateTimePickerSearch);
             Controls.Add(buttonPayOrder);
             Controls.Add(buttonDirections);
             Controls.Add(buttonTransport);
@@ -293,5 +342,9 @@
         private Button buttonPayOrder;
         private ToolStripMenuItem сведенияОToolStripMenuItem;
         private ColumnHeader columnHeaderPayAmount;
+        private DateTimePicker dateTimePickerSearch;
+        private CheckBox checkBoxDateSearch;
+        private ComboBox comboBoxDirectionSearch;
+        private Label label1;
     }
 }
