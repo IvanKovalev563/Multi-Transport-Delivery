@@ -28,7 +28,7 @@ namespace MultiTransportDelivery
             comboBoxDirection.SelectedIndex = comboBoxDirection.FindStringExact(oldOrder.SubItems[2].Text);
             numericUpDownDistance.Value = decimal.Parse(oldOrder.SubItems[3].Text);
             numericUpDownWeight.Value = decimal.Parse(oldOrder.SubItems[5].Text);
-            comboBoxStatus.Text = oldOrder.SubItems[7].Text;
+            comboBoxStatus.Text = oldOrder.SubItems[8].Text;
 
             calculateCost(null, null);
         }

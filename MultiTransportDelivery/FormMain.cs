@@ -83,18 +83,21 @@ namespace MultiTransportDelivery
         {
             FormClients client = new FormClients();
             client.ShowDialog();
+            listViewOrders_SelectedIndexChanged(null, null);
         }
 
         private void buttonTransport_Click(object sender, EventArgs e)
         {
             FormTransport transport = new FormTransport();
             transport.ShowDialog();
+            listViewOrders_SelectedIndexChanged(null, null);
         }
 
         private void buttonDirections_Click(object sender, EventArgs e)
         {
             FormDirections directions = new FormDirections();
             directions.ShowDialog();
+            listViewOrders_SelectedIndexChanged(null, null);
         }
 
         private void buttonAddOrder_Click(object sender, EventArgs e)
@@ -102,6 +105,7 @@ namespace MultiTransportDelivery
             FormAddOrder formAddOrder = new FormAddOrder();
             formAddOrder.ShowDialog();
             loadTable();
+            listViewOrders_SelectedIndexChanged(null, null);
         }
 
         private void buttonEditOrder_Click(object sender, EventArgs e)
@@ -109,6 +113,7 @@ namespace MultiTransportDelivery
             FormEditOrder formEditOrder = new FormEditOrder(listViewOrders.SelectedItems[0]);
             formEditOrder.ShowDialog();
             loadTable();
+            listViewOrders_SelectedIndexChanged(null, null);
         }
 
         private void buttonDelOrder_Click(object sender, EventArgs e)
@@ -126,12 +131,14 @@ namespace MultiTransportDelivery
         {
             FormOrdersInfo formOrdersInfo = new FormOrdersInfo();
             formOrdersInfo.ShowDialog();
+            listViewOrders_SelectedIndexChanged(null, null);
         }
 
         private void Ò‚Â‰ÂÌËˇŒToolStripMenuItem_Click(object sender, EventArgs e)
         {
             FormDebtors formDebtors = new FormDebtors();
             formDebtors.ShowDialog();
+            listViewOrders_SelectedIndexChanged(null, null);
         }
 
         private void buttonPayOrder_Click(object sender, EventArgs e)
@@ -139,6 +146,7 @@ namespace MultiTransportDelivery
             FormPayOrder payOrder = new FormPayOrder(listViewOrders.SelectedItems[0]);
             payOrder.ShowDialog();
             loadTable();
+            listViewOrders_SelectedIndexChanged(null, null);
         }
     }
 }
