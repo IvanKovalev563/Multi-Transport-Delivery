@@ -100,8 +100,9 @@
             Controls.Add(textBoxName);
             Controls.Add(buttonCancel);
             Controls.Add(buttonAccept);
+            FormBorderStyle = FormBorderStyle.Fixed3D;
             Name = "FormEditDirection";
-            Text = "FormEditDirection";
+            Text = "Direction edit";
             ResumeLayout(false);
             PerformLayout();
         }

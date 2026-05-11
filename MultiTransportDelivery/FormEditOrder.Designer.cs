@@ -240,7 +240,7 @@
             Controls.Add(comboBoxClient);
             FormBorderStyle = FormBorderStyle.Fixed3D;
             Name = "FormEditOrder";
-            Text = "FormEditOrder";
+            Text = "Order edit";
             ((System.ComponentModel.ISupportInitialize)numericUpDownDistance).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownWeight).EndInit();
             ResumeLayout(false);

@@ -110,7 +110,7 @@
             Controls.Add(buttonAddDirection);
             Controls.Add(listViewDirections);
             Name = "FormDirections";
-            Text = "FormDirections";
+            Text = "Directions";
             ResizeEnd += FormDirections_ResizeEnd;
             ResumeLayout(false);
             PerformLayout();

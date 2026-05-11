@@ -623,17 +623,20 @@ namespace DataAccess
                 using (var conn = DatabaseAccess.connectDB())
                 {
                     string sql = @"SELECT 
-                            c.client_id,
-                            c.full_name,
-                            COALESCE(SUM(o.cost), 0) - COALESCE(SUM(p.amount), 0) AS debt
-                          FROM client c
-                          LEFT JOIN `order` o 
-                            ON c.client_id = o.client_id AND o.status = 'Доставлен'
-                          LEFT JOIN payment p 
-                            ON c.client_id = p.client_id
-                          GROUP BY c.client_id, c.full_name
-                          HAVING debt > 0
-                          ORDER BY debt DESC";
+                                     client_id,
+                                     full_name,
+                                     (SELECT COALESCE(SUM(o.cost), 0) 
+                                      FROM `order` o 
+                                      WHERE o.client_id = c.client_id AND o.status = 'Доставлен')
+                                     -
+                                     (SELECT COALESCE(SUM(p.amount), 0) 
+                                      FROM payment p 
+                                      JOIN `order` o ON p.order_id = o.order_id 
+                                      WHERE o.client_id = c.client_id AND o.status = 'Доставлен') 
+                                     AS debt
+                                   FROM client c
+                                   HAVING debt > 0
+                                   ORDER BY debt DESC";
 
                     using (var cmd = new MySqlCommand(sql, conn))
                     {

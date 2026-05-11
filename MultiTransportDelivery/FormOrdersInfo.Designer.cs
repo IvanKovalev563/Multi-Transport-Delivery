@@ -98,7 +98,7 @@
             Controls.Add(label1);
             FormBorderStyle = FormBorderStyle.Fixed3D;
             Name = "FormOrdersInfo";
-            Text = "FormOrdersInfo";
+            Text = "Orders info";
             ResumeLayout(false);
             PerformLayout();
         }

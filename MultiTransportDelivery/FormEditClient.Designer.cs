@@ -175,7 +175,7 @@
             Controls.Add(buttonAccept);
             FormBorderStyle = FormBorderStyle.Fixed3D;
             Name = "FormEditClient";
-            Text = "FormEditClient";
+            Text = "Client edit";
             ResumeLayout(false);
             PerformLayout();
         }

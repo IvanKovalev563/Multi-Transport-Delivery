@@ -48,6 +48,7 @@
             // listViewDebtors
             // 
             listViewDebtors.Columns.AddRange(new ColumnHeader[] { columnHeaderDebtor, columnHeaderDebtAmount });
+            listViewDebtors.FullRowSelect = true;
             listViewDebtors.Location = new Point(12, 58);
             listViewDebtors.Name = "listViewDebtors";
             listViewDebtors.Size = new Size(440, 191);
@@ -74,7 +75,7 @@
             Controls.Add(label1);
             FormBorderStyle = FormBorderStyle.Fixed3D;
             Name = "FormDebtors";
-            Text = "FormDebtors";
+            Text = "Debtors";
             ResumeLayout(false);
             PerformLayout();
         }

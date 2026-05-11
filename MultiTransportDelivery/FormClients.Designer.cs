@@ -125,7 +125,7 @@
             Controls.Add(buttonAddClient);
             Controls.Add(listViewClients);
             Name = "FormClients";
-            Text = "FormClients";
+            Text = "Clients";
             ResizeEnd += FormClients_ResizeEnd;
             ResumeLayout(false);
             PerformLayout();

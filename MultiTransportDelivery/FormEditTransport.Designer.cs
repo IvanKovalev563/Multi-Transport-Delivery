@@ -129,7 +129,7 @@
             Controls.Add(buttonAccept);
             FormBorderStyle = FormBorderStyle.Fixed3D;
             Name = "FormEditTransport";
-            Text = "FormEditTransport";
+            Text = "Transport edit";
             ((System.ComponentModel.ISupportInitialize)numericUpDownPrice).EndInit();
             ResumeLayout(false);
             PerformLayout();

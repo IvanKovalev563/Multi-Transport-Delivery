@@ -101,7 +101,7 @@
             Controls.Add(buttonCancel);
             Controls.Add(buttonAccept);
             Name = "FormAddDirection";
-            Text = "FormAddDirection";
+            Text = "Direction add";
             ResumeLayout(false);
             PerformLayout();
         }

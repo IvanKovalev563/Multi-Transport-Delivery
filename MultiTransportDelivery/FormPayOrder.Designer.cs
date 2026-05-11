@@ -104,7 +104,7 @@
             Controls.Add(label1);
             FormBorderStyle = FormBorderStyle.Fixed3D;
             Name = "FormPayOrder";
-            Text = "FormPayOrder";
+            Text = "Order payment";
             ((System.ComponentModel.ISupportInitialize)numericUpDownPay).EndInit();
             ResumeLayout(false);
             PerformLayout();

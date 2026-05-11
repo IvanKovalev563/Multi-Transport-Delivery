@@ -115,7 +115,7 @@
             Controls.Add(buttonAddTransport);
             Controls.Add(listViewTransport);
             Name = "FormTransport";
-            Text = "FormTransport";
+            Text = "Transport";
             ResizeEnd += FormTransport_ResizeEnd;
             ResumeLayout(false);
             PerformLayout();

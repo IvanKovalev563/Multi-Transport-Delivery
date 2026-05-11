@@ -216,7 +216,7 @@
             Controls.Add(comboBoxClient);
             FormBorderStyle = FormBorderStyle.Fixed3D;
             Name = "FormAddOrder";
-            Text = "FormAddOrder";
+            Text = "Order add";
             ((System.ComponentModel.ISupportInitialize)numericUpDownWeight).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownDistance).EndInit();
             ResumeLayout(false);
