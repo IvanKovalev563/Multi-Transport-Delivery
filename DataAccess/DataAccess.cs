@@ -537,8 +537,8 @@ namespace DataAccess
             }
             catch (MySqlException ex) when (ex.Number == 1451)
             {
-                MessageBox.Show("Невозможно удалить заказ: на него есть платежи.",
-                                "Удаление невозможно", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                DataPayments.delPaymentsFromOrder(id);
+                delOrder(id);
             }
             catch (Exception ex)
             {
@@ -687,6 +687,23 @@ namespace DataAccess
                 MessageBox.Show($"Ошибка добавления оплаты: {ex.Message}", "Ошибка",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
+            }
+        }
+        public static void delPaymentsFromOrder(int orderID)
+        {
+            try
+            {
+                using (var conn = DatabaseAccess.connectDB())
+                {
+                    using (var cmd = new MySqlCommand($"delete from payment where order_id={orderID}", conn))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка удаления платежей из заказа: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }
