@@ -1,7 +1,10 @@
-﻿using MySql.Data;
+﻿using Microsoft.VisualBasic.Devices;
+using MySql.Data;
 using MySql.Data.MySqlClient;
 using MySqlX.XDevAPI;
+using System.Drawing;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using static Mysqlx.Crud.Order.Types;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
@@ -27,20 +30,24 @@ namespace DataAccess
             {
                 using (var conn = DatabaseAccess.connectDB())
                 {
-                    using (var cmd = new MySqlCommand($"select * from client", conn))
+                    string sql = @"SELECT c.client_id, c.full_name, c.personal_account, c.phone,
+                                  r.name AS region, ct.name AS city, s.name AS street, c.house
+                           FROM client c
+                           LEFT JOIN region r ON c.region_id = r.id
+                           LEFT JOIN city ct ON c.city_id = ct.id
+                           LEFT JOIN street s ON c.street_id = s.id";
+                    using (var cmd = new MySqlCommand(sql, conn))
+                    using (var reader = cmd.ExecuteReader())
                     {
-                        using (var reader = cmd.ExecuteReader())
+                        while (reader.Read())
                         {
-                            while (reader.Read())
-                            {
-                                ListViewItem item = new ListViewItem(reader["full_name"].ToString());
-                                item.SubItems.Add(reader["address"].ToString());
-                                item.SubItems.Add(reader["personal_account"].ToString());
-                                item.SubItems.Add(reader["phone"].ToString());
-                                item.SubItems.Add(reader["client_id"].ToString());
-
-                                items.Add(item);
-                            }
+                            string address = $"{reader["region"]}, {reader["city"]}, {reader["street"]}, д.{reader["house"]}";
+                            var item = new ListViewItem(reader["full_name"].ToString());
+                            item.SubItems.Add(address);                       
+                            item.SubItems.Add(reader["personal_account"].ToString());
+                            item.SubItems.Add(reader["phone"].ToString());
+                            item.SubItems.Add(reader["client_id"].ToString());
+                            items.Add(item);
                         }
                     }
                 }
@@ -51,22 +58,24 @@ namespace DataAccess
             }
             return items;
         }
-        public static bool addClient(string Name, string Address, string PersonalAccount, string Phone)
+        public static bool addClient(string name, int regionId, int cityId, int streetId, string house, string personalAccount, string phone)
         {
-            try
+            using (var conn = DatabaseAccess.connectDB())
             {
-                using (var conn = DatabaseAccess.connectDB())
+                string sql = @"INSERT INTO client (full_name, region_id, city_id, street_id, house,
+                                              personal_account, phone)
+                           VALUES (@name, @rid, @cid, @sid, @house, @acc, @phone)";
+                using (var cmd = new MySqlCommand(sql, conn))
                 {
-                    using (var cmd = new MySqlCommand($"insert into client (full_name, address, personal_account, phone) values ('{Name}', '{Address}', '{PersonalAccount}', '{Phone}')", conn))
-                    {
-                        cmd.ExecuteNonQuery();
-                    }
+                    cmd.Parameters.AddWithValue("@name", name);
+                    cmd.Parameters.AddWithValue("@rid", regionId);
+                    cmd.Parameters.AddWithValue("@cid", cityId);
+                    cmd.Parameters.AddWithValue("@sid", streetId);
+                    cmd.Parameters.AddWithValue("@house", house);
+                    cmd.Parameters.AddWithValue("@acc", personalAccount);
+                    cmd.Parameters.AddWithValue("@phone", phone);
+                    cmd.ExecuteNonQuery();
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка добавления данных в client: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
             }
             return true;
         }
@@ -92,42 +101,59 @@ namespace DataAccess
                 MessageBox.Show($"Ошибка удаления данных из client: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        public static bool editClient(string Name, string Address, string PersAccount, string Phone, ListViewItem oldClient)
+        public static bool editClient(string name, int regionId, int cityId, int streetId, string house, string personalAccount, string phone, ListViewItem oldClient)
         {
             try
             {
                 using (var conn = DatabaseAccess.connectDB())
                 {
-                    using (var cmd = new MySqlCommand(
-                        $"update client" +
-                        $" set full_name = '{Name}', address = '{Address}', personal_account = '{PersAccount}', phone = '{Phone}'" +
-                        $" where client_id={oldClient.SubItems[4].Text}", conn))
+                    string sql = @"UPDATE client SET 
+                           full_name = @name,
+                           region_id = @regionId,
+                           city_id = @cityId,
+                           street_id = @streetId,
+                           house = @house,
+                           personal_account = @acc,
+                           phone = @phone
+                           WHERE client_id = @clientId";
+                    using (var cmd = new MySqlCommand(sql, conn))
                     {
+                        cmd.Parameters.AddWithValue("@name", name);
+                        cmd.Parameters.AddWithValue("@regionId", regionId);
+                        cmd.Parameters.AddWithValue("@cityId", cityId);
+                        cmd.Parameters.AddWithValue("@streetId", streetId);
+                        cmd.Parameters.AddWithValue("@house", house);
+                        cmd.Parameters.AddWithValue("@acc", personalAccount);
+                        cmd.Parameters.AddWithValue("@phone", phone);
+                        cmd.Parameters.AddWithValue("@clientId", oldClient.SubItems[4].ToString());
                         cmd.ExecuteNonQuery();
                     }
                 }
+                return true;
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка изменения данных в client: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
-            return true;
         }
-        public static bool isClientDuplicate(string Name, string Address, string PersonalAccount, string Phone)
+        public static bool isClientDuplicate(string Name, string PersonalAccount, string Phone, int RegionId, int CityId, int StreetId, string house)
         {
             try
             {
                 using (var conn = DatabaseAccess.connectDB())
                 {
                     using (var cmd = new MySqlCommand(@"SELECT COUNT(*) FROM client 
-                           WHERE full_name = @fn AND address = @ad AND personal_account = @pa 
+                           WHERE full_name = @fn AND personal_account = @pa AND region_id = @rid AND city_id = @cid AND street_id = @sid AND house NOT LIKE @hs
                            AND phone = @ph", conn))
                     {
                         cmd.Parameters.AddWithValue("@fn", Name);
                         cmd.Parameters.AddWithValue("@pa", PersonalAccount);
-                        cmd.Parameters.AddWithValue("@ad", Address);
                         cmd.Parameters.AddWithValue("@ph", Phone);
+                        cmd.Parameters.AddWithValue("@rid", RegionId);
+                        cmd.Parameters.AddWithValue("@cid", CityId);
+                        cmd.Parameters.AddWithValue("@sid", StreetId);
+                        cmd.Parameters.AddWithValue("@hs", house);
 
                         int count = Convert.ToInt32(cmd.ExecuteScalar());
                         return count > 0;
@@ -705,6 +731,92 @@ namespace DataAccess
             {
                 MessageBox.Show($"Ошибка удаления платежей из заказа: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+    }
+
+    public static class DataAddress
+    {
+        public static List<ListViewItem> getRegions()
+        {
+            var items = new List<ListViewItem>();
+            try
+            {
+                using (var conn = DatabaseAccess.connectDB())
+                {
+                    using (var cmd = new MySqlCommand("SELECT id, name FROM region ORDER BY name", conn))
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var item = new ListViewItem(reader["name"].ToString());
+                            item.SubItems.Add(reader["id"].ToString()); // скрытый ID
+                            items.Add(item);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка получения регионов: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            return items;
+        }
+
+        public static List<ListViewItem> getCities(int regionId = -1)
+        {
+            var items = new List<ListViewItem>();
+            try
+            {
+                string sql = "SELECT id, name, region_id FROM city";
+                if (regionId > -1) sql += " WHERE region_id = " + regionId;
+                sql += " ORDER BY name";
+
+                using (var conn = DatabaseAccess.connectDB())
+                using (var cmd = new MySqlCommand(sql, conn))
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var item = new ListViewItem(reader["name"].ToString());
+                        item.SubItems.Add(reader["id"].ToString()); 
+                                                            
+                        items.Add(item);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка получения городов: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            return items;
+        }
+
+        public static List<ListViewItem> getStreets(int cityId = -1)
+        {
+            var items = new List<ListViewItem>();
+            try
+            {
+                string sql = "SELECT id, name, city_id FROM street";
+                if (cityId > -1) sql += " WHERE city_id = " + cityId;
+                sql += " ORDER BY name";
+
+                using (var conn = DatabaseAccess.connectDB())
+                using (var cmd = new MySqlCommand(sql, conn))
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var item = new ListViewItem(reader["name"].ToString());
+                        item.SubItems.Add(reader["id"].ToString());
+                        items.Add(item);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка получения улиц: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            return items;
         }
     }
 }
