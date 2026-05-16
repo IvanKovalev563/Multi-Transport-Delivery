@@ -36,6 +36,10 @@
             buttonAddTransport = new Button();
             labelEmptyTransport = new Label();
             textBoxSearch = new TextBox();
+            listViewSubtransport = new ListView();
+            columnHeaderSubname = new ColumnHeader();
+            buttonAddSubtransport = new Button();
+            buttonDelSubtransport = new Button();
             SuspendLayout();
             // 
             // listViewTransport
@@ -45,7 +49,7 @@
             listViewTransport.FullRowSelect = true;
             listViewTransport.Location = new Point(12, 12);
             listViewTransport.Name = "listViewTransport";
-            listViewTransport.Size = new Size(805, 244);
+            listViewTransport.Size = new Size(610, 244);
             listViewTransport.TabIndex = 0;
             listViewTransport.UseCompatibleStateImageBehavior = false;
             listViewTransport.View = View.Details;
@@ -75,7 +79,7 @@
             // 
             buttonEditTransport.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             buttonEditTransport.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            buttonEditTransport.Location = new Point(433, 262);
+            buttonEditTransport.Location = new Point(433, 264);
             buttonEditTransport.Name = "buttonEditTransport";
             buttonEditTransport.Size = new Size(189, 27);
             buttonEditTransport.TabIndex = 9;
@@ -87,7 +91,7 @@
             // 
             buttonAddTransport.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             buttonAddTransport.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            buttonAddTransport.Location = new Point(628, 262);
+            buttonAddTransport.Location = new Point(628, 264);
             buttonAddTransport.Name = "buttonAddTransport";
             buttonAddTransport.Size = new Size(189, 27);
             buttonAddTransport.TabIndex = 8;
@@ -114,11 +118,55 @@
             textBoxSearch.TabIndex = 18;
             textBoxSearch.TextChanged += textBoxSearch_TextChanged;
             // 
+            // listViewSubtransport
+            // 
+            listViewSubtransport.Columns.AddRange(new ColumnHeader[] { columnHeaderSubname });
+            listViewSubtransport.FullRowSelect = true;
+            listViewSubtransport.Location = new Point(628, 12);
+            listViewSubtransport.Name = "listViewSubtransport";
+            listViewSubtransport.Size = new Size(189, 178);
+            listViewSubtransport.TabIndex = 19;
+            listViewSubtransport.UseCompatibleStateImageBehavior = false;
+            listViewSubtransport.View = View.Details;
+            listViewSubtransport.SelectedIndexChanged += listViewSubtransport_SelectedIndexChanged;
+            // 
+            // columnHeaderSubname
+            // 
+            columnHeaderSubname.Text = "Подвид транспорта";
+            columnHeaderSubname.Width = 187;
+            // 
+            // buttonAddSubtransport
+            // 
+            buttonAddSubtransport.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            buttonAddSubtransport.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            buttonAddSubtransport.Location = new Point(628, 196);
+            buttonAddSubtransport.Name = "buttonAddSubtransport";
+            buttonAddSubtransport.Size = new Size(189, 27);
+            buttonAddSubtransport.TabIndex = 20;
+            buttonAddSubtransport.Text = "Добавить подвид";
+            buttonAddSubtransport.UseVisualStyleBackColor = true;
+            buttonAddSubtransport.Click += buttonAddSubtransport_Click;
+            // 
+            // buttonDelSubtransport
+            // 
+            buttonDelSubtransport.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            buttonDelSubtransport.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            buttonDelSubtransport.Location = new Point(628, 229);
+            buttonDelSubtransport.Name = "buttonDelSubtransport";
+            buttonDelSubtransport.Size = new Size(189, 27);
+            buttonDelSubtransport.TabIndex = 21;
+            buttonDelSubtransport.Text = "Удалить подвид";
+            buttonDelSubtransport.UseVisualStyleBackColor = true;
+            buttonDelSubtransport.Click += buttonDelSubtransport_Click;
+            // 
             // FormTransport
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(829, 301);
+            Controls.Add(buttonDelSubtransport);
+            Controls.Add(buttonAddSubtransport);
+            Controls.Add(listViewSubtransport);
             Controls.Add(textBoxSearch);
             Controls.Add(labelEmptyTransport);
             Controls.Add(buttonDelTransport);
@@ -142,5 +190,9 @@
         private ColumnHeader columnHeaderCost;
         private Label labelEmptyTransport;
         private TextBox textBoxSearch;
+        private ListView listViewSubtransport;
+        private ColumnHeader columnHeaderSubname;
+        private Button buttonAddSubtransport;
+        private Button buttonDelSubtransport;
     }
 }

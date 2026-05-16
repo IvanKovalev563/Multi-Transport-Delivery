@@ -38,12 +38,16 @@
             label4 = new Label();
             comboBoxDirection = new ComboBox();
             label3 = new Label();
-            comboBoxTransport = new ComboBox();
             label2 = new Label();
             label1 = new Label();
             comboBoxClient = new ComboBox();
             label7 = new Label();
             comboBoxStatus = new ComboBox();
+            label8 = new Label();
+            comboBoxCurrency = new ComboBox();
+            label9 = new Label();
+            comboBoxSubtransport = new ComboBox();
+            comboBoxTransport = new ComboBox();
             ((System.ComponentModel.ISupportInitialize)numericUpDownDistance).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownWeight).BeginInit();
             SuspendLayout();
@@ -66,15 +70,16 @@
             numericUpDownDistance.Location = new Point(124, 207);
             numericUpDownDistance.Maximum = new decimal(new int[] { 40075, 0, 0, 0 });
             numericUpDownDistance.Name = "numericUpDownDistance";
-            numericUpDownDistance.Size = new Size(363, 25);
+            numericUpDownDistance.Size = new Size(448, 25);
             numericUpDownDistance.TabIndex = 54;
             numericUpDownDistance.ValueChanged += calculateCost;
             // 
             // labelCost
             // 
+            labelCost.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             labelCost.AutoSize = true;
             labelCost.Font = new Font("Arial", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            labelCost.Location = new Point(13, 286);
+            labelCost.Location = new Point(13, 323);
             labelCost.Name = "labelCost";
             labelCost.Size = new Size(140, 22);
             labelCost.TabIndex = 53;
@@ -82,8 +87,9 @@
             // 
             // buttonCancel
             // 
+            buttonCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             buttonCancel.Font = new Font("Microsoft Sans Serif", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            buttonCancel.Location = new Point(228, 283);
+            buttonCancel.Location = new Point(314, 320);
             buttonCancel.Margin = new Padding(4, 3, 4, 3);
             buttonCancel.Name = "buttonCancel";
             buttonCancel.Size = new Size(125, 30);
@@ -94,8 +100,9 @@
             // 
             // buttonAccept
             // 
+            buttonAccept.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             buttonAccept.Font = new Font("Microsoft Sans Serif", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            buttonAccept.Location = new Point(361, 283);
+            buttonAccept.Location = new Point(447, 320);
             buttonAccept.Margin = new Padding(4, 3, 4, 3);
             buttonAccept.Name = "buttonAccept";
             buttonAccept.Size = new Size(125, 30);
@@ -122,7 +129,7 @@
             numericUpDownWeight.Location = new Point(124, 176);
             numericUpDownWeight.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
             numericUpDownWeight.Name = "numericUpDownWeight";
-            numericUpDownWeight.Size = new Size(363, 25);
+            numericUpDownWeight.Size = new Size(448, 25);
             numericUpDownWeight.TabIndex = 49;
             numericUpDownWeight.ValueChanged += calculateCost;
             // 
@@ -138,11 +145,12 @@
             // 
             // comboBoxDirection
             // 
+            comboBoxDirection.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBoxDirection.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
             comboBoxDirection.FormattingEnabled = true;
             comboBoxDirection.Location = new Point(124, 145);
             comboBoxDirection.Name = "comboBoxDirection";
-            comboBoxDirection.Size = new Size(363, 25);
+            comboBoxDirection.Size = new Size(448, 25);
             comboBoxDirection.TabIndex = 47;
             comboBoxDirection.SelectedIndexChanged += calculateCost;
             // 
@@ -155,16 +163,6 @@
             label3.Size = new Size(74, 17);
             label3.TabIndex = 46;
             label3.Text = "Транспорт:";
-            // 
-            // comboBoxTransport
-            // 
-            comboBoxTransport.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            comboBoxTransport.FormattingEnabled = true;
-            comboBoxTransport.Location = new Point(124, 114);
-            comboBoxTransport.Name = "comboBoxTransport";
-            comboBoxTransport.Size = new Size(363, 25);
-            comboBoxTransport.TabIndex = 45;
-            comboBoxTransport.SelectedIndexChanged += calculateCost;
             // 
             // label2
             // 
@@ -189,11 +187,12 @@
             // 
             // comboBoxClient
             // 
+            comboBoxClient.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBoxClient.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
             comboBoxClient.FormattingEnabled = true;
             comboBoxClient.Location = new Point(124, 83);
             comboBoxClient.Name = "comboBoxClient";
-            comboBoxClient.Size = new Size(363, 25);
+            comboBoxClient.Size = new Size(448, 25);
             comboBoxClient.TabIndex = 42;
             comboBoxClient.SelectedIndexChanged += calculateCost;
             // 
@@ -209,19 +208,79 @@
             // 
             // comboBoxStatus
             // 
+            comboBoxStatus.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBoxStatus.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
             comboBoxStatus.FormattingEnabled = true;
             comboBoxStatus.Items.AddRange(new object[] { "Новый", "В сборке", "В пути", "Доставлен" });
             comboBoxStatus.Location = new Point(124, 238);
             comboBoxStatus.Name = "comboBoxStatus";
-            comboBoxStatus.Size = new Size(363, 25);
+            comboBoxStatus.Size = new Size(448, 25);
             comboBoxStatus.TabIndex = 56;
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label8.Location = new Point(12, 272);
+            label8.Name = "label8";
+            label8.Size = new Size(55, 17);
+            label8.TabIndex = 59;
+            label8.Text = "Валюта:";
+            // 
+            // comboBoxCurrency
+            // 
+            comboBoxCurrency.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBoxCurrency.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            comboBoxCurrency.FormattingEnabled = true;
+            comboBoxCurrency.Location = new Point(124, 269);
+            comboBoxCurrency.Name = "comboBoxCurrency";
+            comboBoxCurrency.Size = new Size(448, 25);
+            comboBoxCurrency.TabIndex = 58;
+            comboBoxCurrency.SelectedIndexChanged += calculateCost;
+            // 
+            // label9
+            // 
+            label9.AutoSize = true;
+            label9.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label9.Location = new Point(312, 117);
+            label9.Name = "label9";
+            label9.Size = new Size(128, 17);
+            label9.TabIndex = 62;
+            label9.Text = "Подвид транспорта:";
+            // 
+            // comboBoxSubtransport
+            // 
+            comboBoxSubtransport.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            comboBoxSubtransport.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBoxSubtransport.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            comboBoxSubtransport.FormattingEnabled = true;
+            comboBoxSubtransport.Location = new Point(446, 114);
+            comboBoxSubtransport.Name = "comboBoxSubtransport";
+            comboBoxSubtransport.Size = new Size(126, 25);
+            comboBoxSubtransport.TabIndex = 61;
+            // 
+            // comboBoxTransport
+            // 
+            comboBoxTransport.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            comboBoxTransport.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBoxTransport.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            comboBoxTransport.FormattingEnabled = true;
+            comboBoxTransport.Location = new Point(123, 114);
+            comboBoxTransport.Name = "comboBoxTransport";
+            comboBoxTransport.Size = new Size(183, 25);
+            comboBoxTransport.TabIndex = 60;
+            comboBoxTransport.SelectedIndexChanged += comboBoxTransport_SelectedIndexChanged;
             // 
             // FormEditOrder
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(503, 329);
+            ClientSize = new Size(585, 362);
+            Controls.Add(label9);
+            Controls.Add(comboBoxSubtransport);
+            Controls.Add(comboBoxTransport);
+            Controls.Add(label8);
+            Controls.Add(comboBoxCurrency);
             Controls.Add(label7);
             Controls.Add(comboBoxStatus);
             Controls.Add(label6);
@@ -234,7 +293,6 @@
             Controls.Add(label4);
             Controls.Add(comboBoxDirection);
             Controls.Add(label3);
-            Controls.Add(comboBoxTransport);
             Controls.Add(label2);
             Controls.Add(label1);
             Controls.Add(comboBoxClient);
@@ -259,11 +317,15 @@
         private Label label4;
         private ComboBox comboBoxDirection;
         private Label label3;
-        private ComboBox comboBoxTransport;
         private Label label2;
         private Label label1;
         private ComboBox comboBoxClient;
         private Label label7;
         private ComboBox comboBoxStatus;
+        private Label label8;
+        private ComboBox comboBoxCurrency;
+        private Label label9;
+        private ComboBox comboBoxSubtransport;
+        private ComboBox comboBoxTransport;
     }
 }

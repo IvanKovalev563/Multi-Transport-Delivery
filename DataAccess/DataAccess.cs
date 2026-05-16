@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualBasic.Devices;
+﻿using DataAccess;
+using Microsoft.VisualBasic.Devices;
 using MySql.Data;
 using MySql.Data.MySqlClient;
 using MySqlX.XDevAPI;
@@ -350,6 +351,84 @@ namespace DataAccess
             }
             return items;
         }
+        public static List<ListViewItem> getSubtypes(int transportId)
+        {
+            var items = new List<ListViewItem>();
+            try
+            {
+                using (var conn = DatabaseAccess.connectDB())
+                {
+                    string sql = @"SELECT st.subtransport_id, st.name, st.transport_id, t.name AS transport_name
+                           FROM subtransport st
+                           JOIN transport t ON st.transport_id = t.transport_id";
+                    if (transportId > -1)
+                        sql += " WHERE st.transport_id = " + transportId;
+                    sql += " ORDER BY t.name, st.name";
+
+                    using (var cmd = new MySqlCommand(sql, conn))
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var item = new ListViewItem(reader["name"].ToString());
+                            item.SubItems.Add(reader["transport_name"].ToString());
+                            item.SubItems.Add(reader["subtransport_id"].ToString()); 
+                            item.SubItems.Add(reader["transport_id"].ToString()); 
+                            items.Add(item);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка получения подвидов транспорта: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            return items;
+        }
+        public static bool addSubtransport(string name, int transportId)
+        {
+            try
+            {
+                using (var conn = DatabaseAccess.connectDB())
+                {
+                    string sql = "INSERT INTO subtransport (name, transport_id) VALUES (@name, @transportId)";
+                    using (var cmd = new MySqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@name", name);
+                        cmd.Parameters.AddWithValue("@transportId", transportId);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка добавления подвида транспорта: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+        }
+        public static void delSubtransport(int id)
+        {
+            try
+            {
+                using (var conn = DatabaseAccess.connectDB())
+                {
+                    using (var cmd = new MySqlCommand($"DELETE FROM subtransport WHERE subtransport_id = {id}", conn))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (MySqlException ex) when (ex.Number == 1451)
+            {
+                MessageBox.Show("Невозможно удалить подвид транспорта: на него есть оформленные заказы.",
+                                "Удаление невозможно", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка удаления подвида транспорта: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
     }
 
     public static class DataDirections
@@ -480,35 +559,39 @@ namespace DataAccess
     {
         public static List<ListViewItem> getOrders(int clientID, DateTime dateSearch, int directionSearch)
         {
-            List<ListViewItem> items = new List<ListViewItem>();
+            var items = new List<ListViewItem>();
             try
             {
                 using (var conn = DatabaseAccess.connectDB())
                 {
                     string sql = @"
-                    SELECT o.order_id, o.client_id, o.order_date, o.cargo_weight, o.distance, o.cost, o.status,
-                           c.full_name, c.phone,
-                           t.name AS transport, d.name AS direction,
-                           COALESCE(paid.total_paid, 0) AS paid_amount,
-                           o.cost - COALESCE(paid.total_paid, 0) AS debt
-                    FROM `order` o
-                    LEFT JOIN client c ON o.client_id = c.client_id
-                    LEFT JOIN transport t ON o.transport_id = t.transport_id
-                    LEFT JOIN direction d ON o.direction_id = d.direction_id
-                    LEFT JOIN (
-                        SELECT order_id, SUM(amount) AS total_paid
-                        FROM payment
-                        WHERE order_id IS NOT NULL
-                        GROUP BY order_id
-                    ) paid ON o.order_id = paid.order_id
-                    WHERE (@clientId = -1 OR o.client_id = @clientId)";
+                                SELECT o.order_id, o.client_id, o.order_date, o.cargo_weight, o.distance, o.cost, o.status,
+                                       c.full_name, c.phone, o.currency_id,
+                                       t.name AS transport, d.name AS direction,
+                                       st.name AS subtransport_name,
+                                       o.subtransport_id, o.transport_id,
+                                       COALESCE(paid.total_paid, 0) AS paid_amount,
+                                       o.cost - COALESCE(paid.total_paid, 0) AS debt
+                                FROM `order` o
+                                LEFT JOIN client c ON o.client_id = c.client_id
+                                LEFT JOIN transport t ON o.transport_id = t.transport_id
+                                LEFT JOIN direction d ON o.direction_id = d.direction_id
+                                LEFT JOIN subtransport st ON o.subtransport_id = st.subtransport_id
+                                LEFT JOIN (
+                                    SELECT order_id, SUM(amount) AS total_paid
+                                    FROM payment
+                                    WHERE order_id IS NOT NULL
+                                    GROUP BY order_id
+                                ) paid ON o.order_id = paid.order_id
+                                WHERE (@clientId = -1 OR o.client_id = @clientId)";
 
                     if (dateSearch != DateTime.MinValue)
                     {
                         sql += " AND o.order_date >= @dateFrom AND o.order_date < @dateTo";
                     }
 
-                    if (directionSearch != -1) sql += $" AND d.direction_id = {directionSearch}";
+                    if (directionSearch != -1)
+                        sql += $" AND d.direction_id = {directionSearch}";
 
                     sql += " ORDER BY o.order_date DESC";
 
@@ -520,22 +603,32 @@ namespace DataAccess
                             cmd.Parameters.AddWithValue("@dateFrom", dateSearch.Date);
                             cmd.Parameters.AddWithValue("@dateTo", dateSearch.Date.AddDays(1));
                         }
+
                         using (var reader = cmd.ExecuteReader())
                         {
                             while (reader.Read())
                             {
-                                ListViewItem item = new ListViewItem(reader["full_name"].ToString()); //0
-                                item.SubItems.Add(reader["transport"].ToString()); //1
-                                item.SubItems.Add(reader["direction"].ToString()); //2
-                                item.SubItems.Add(reader["distance"].ToString()); //3
-                                item.SubItems.Add(reader["order_date"].ToString()); //4
-                                item.SubItems.Add(reader["cargo_weight"].ToString()); //5
-                                item.SubItems.Add(reader["cost"].ToString()); //6
-                                item.SubItems.Add(Convert.ToDecimal(reader["paid_amount"]).ToString("F2")); //7
-                                item.SubItems.Add(reader["status"].ToString()); //8
-                                item.SubItems.Add(Convert.ToDecimal(reader["debt"]).ToString("F2")); //9
-                                item.SubItems.Add(reader["order_id"].ToString()); //10
-                                item.SubItems.Add(reader["client_id"].ToString()); //11
+                                var item = new ListViewItem(reader["full_name"].ToString());
+
+                                string transport = reader["transport"].ToString();
+                                string subtransport = reader["subtransport_name"].ToString();
+                                string transportDisplay = transport;
+                                if (!string.IsNullOrWhiteSpace(subtransport))
+                                    transportDisplay += $" ({subtransport})";
+                                item.SubItems.Add(transportDisplay);
+                                item.SubItems.Add(reader["direction"].ToString());
+                                item.SubItems.Add(reader["distance"].ToString());
+                                item.SubItems.Add(reader["order_date"].ToString());
+                                item.SubItems.Add(reader["cargo_weight"].ToString());
+                                item.SubItems.Add(reader["cost"].ToString());
+                                item.SubItems.Add(Convert.ToDecimal(reader["paid_amount"]).ToString("F2"));
+                                item.SubItems.Add(reader["status"].ToString());
+                                item.SubItems.Add(Convert.ToDecimal(reader["debt"]).ToString("F2"));
+                                item.SubItems.Add(reader["order_id"].ToString());
+                                item.SubItems.Add(reader["client_id"].ToString());
+                                item.SubItems.Add(reader["currency_id"].ToString());
+                                item.SubItems.Add(reader["subtransport_id"].ToString());
+                                item.SubItems.Add(reader["transport_id"].ToString());
 
                                 items.Add(item);
                             }
@@ -550,7 +643,7 @@ namespace DataAccess
             }
             return items;
         }
-        public static bool addOrder(int clientId, int transportId, int directionId, float weight, float distance, float cost, string status = "Новый")
+        public static bool addOrder(int clientId, int transportId, int subtransportId, int directionId, float weight, float distance, float cost, int currency, string status = "Новый")
         {
             DateTime orderDate = DateTime.Now;
             try
@@ -558,21 +651,23 @@ namespace DataAccess
                 using (var conn = DatabaseAccess.connectDB())
                 {
                     string sql = @"INSERT INTO `order` 
-                (client_id, transport_id, direction_id, order_date, 
-                 cargo_weight, distance, cost, status)
-                VALUES (@clientId, @transportId, @directionId, @orderDate,
-                        @weight, @distance, @cost, @status)";
+                                   (client_id, transport_id, subtransport_id, direction_id, order_date, 
+                                    cargo_weight, distance, cost, currency_id, status)
+                                   VALUES (@clientId, @transportId, @subtransportId, @directionId, @orderDate,
+                                           @weight, @distance, @cost, @currency, @status)";
 
                     using (var cmd = new MySqlCommand(sql, conn))
                     {
                         cmd.Parameters.AddWithValue("@clientId", clientId);
                         cmd.Parameters.AddWithValue("@transportId", transportId);
+                        cmd.Parameters.AddWithValue("@subtransportId", subtransportId);
                         cmd.Parameters.AddWithValue("@directionId", directionId);
                         cmd.Parameters.AddWithValue("@orderDate", orderDate);
                         cmd.Parameters.AddWithValue("@weight", weight);
                         cmd.Parameters.AddWithValue("@distance", distance);
                         cmd.Parameters.AddWithValue("@cost", cost);
                         cmd.Parameters.AddWithValue("@status", status);
+                        cmd.Parameters.AddWithValue("@currency", currency);
                         cmd.ExecuteNonQuery();
                     }
                 }
@@ -607,7 +702,7 @@ namespace DataAccess
                 MessageBox.Show($"Ошибка удаления данных из Order: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        public static bool editOrder(int clientId, int transportId, int directionId, float weight, float distance, float cost, string status, ListViewItem oldOrder)
+        public static bool editOrder(int clientId, int transportId, int subtransportId, int directionId, float weight, float distance, float cost, int currency, string status, ListViewItem oldOrder)
         {
             try
             {
@@ -616,10 +711,12 @@ namespace DataAccess
                     string sql = @"UPDATE `order` SET 
                                 client_id = @clientId,
                                 transport_id = @transportId,
+                                subtransport_id = @subtransportId,
                                 direction_id = @directionId,
                                 cargo_weight = @weight,
                                 distance = @distance,
                                 cost = @cost,
+                                currency_id = @currency,
                                 status = @status
                                 WHERE order_id = @orderId";
 
@@ -627,11 +724,13 @@ namespace DataAccess
                     {
                         cmd.Parameters.AddWithValue("@clientId", clientId);
                         cmd.Parameters.AddWithValue("@transportId", transportId);
+                        cmd.Parameters.AddWithValue("@subtransportId", subtransportId);
                         cmd.Parameters.AddWithValue("@directionId", directionId);
                         cmd.Parameters.AddWithValue("@weight", weight);
                         cmd.Parameters.AddWithValue("@distance", distance);
                         cmd.Parameters.AddWithValue("@cost", cost);
                         cmd.Parameters.AddWithValue("@status", status);
+                        cmd.Parameters.AddWithValue("@currency", currency);
                         cmd.Parameters.AddWithValue("@orderId", oldOrder.SubItems[10].Text);
                         cmd.ExecuteNonQuery();
                     }
@@ -697,7 +796,7 @@ namespace DataAccess
                                       WHERE o.client_id = c.client_id AND o.status = 'Доставлен') 
                                      AS debt
                                    FROM client c
-                                   HAVING debt > 0
+                                   HAVING debt > 0.1
                                    ORDER BY debt DESC";
 
                     using (var cmd = new MySqlCommand(sql, conn))
@@ -853,6 +952,62 @@ namespace DataAccess
                 MessageBox.Show($"Ошибка получения улиц: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             return items;
+        }
+    }
+}
+
+public static class DataCurrency
+{
+    public static List<ListViewItem> getCurrencies()
+    {
+        var items = new List<ListViewItem>();
+        try
+        {
+            using (var conn = DatabaseAccess.connectDB())
+            {
+                string sql = "SELECT currency_id, name, code, rate_to_rub FROM currency ORDER BY name";
+                using (var cmd = new MySqlCommand(sql, conn))
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        string display = $"{reader["code"]} ({reader["name"]})";
+                        var item = new ListViewItem(display);
+                        item.SubItems.Add(reader["currency_id"].ToString());  // скрытый ID
+                        item.SubItems.Add(reader["rate_to_rub"].ToString()); // скрытый курс
+                        items.Add(item);
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Ошибка получения валют: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+        return items;
+    }
+    public static float GetRate(int currencyId)
+    {
+        try
+        {
+            using (var conn = DatabaseAccess.connectDB())
+            {
+                string sql = "SELECT rate_to_rub FROM currency WHERE currency_id = @id";
+                using (var cmd = new MySqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@id", currencyId);
+                    object result = cmd.ExecuteScalar();
+                    if (result != null && result != DBNull.Value)
+                        return Convert.ToSingle(result);
+                    else
+                        return 1.0f; 
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Ошибка получения курса валюты: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return 1.0f; 
         }
     }
 }

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MultiTransportDelivery
 {
@@ -19,6 +20,7 @@ namespace MultiTransportDelivery
             loadBoxClient();
             loadBoxTransport();
             loadBoxDirection();
+            loadBoxCurrency();
             calculateCost(null, null);
         }
 
@@ -70,6 +72,27 @@ namespace MultiTransportDelivery
                 comboBoxTransport.SelectedIndex = -1;
             }
         }
+        private void loadBoxSubTransport(int transportId)
+        {
+            var items = DataTransport.getSubtypes(transportId);
+            var dict = new Dictionary<int, string>();
+            foreach (ListViewItem it in items)
+            {
+                int id = Convert.ToInt32(it.SubItems[2].Text);  
+                string name = it.SubItems[0].Text;              
+                dict.Add(id, name);
+            }
+
+            comboBoxSubtransport.DataSource = null;
+            comboBoxSubtransport.Items.Clear();
+            if (dict.Count > 0)
+            {
+                comboBoxSubtransport.DataSource = new BindingSource(dict, null);
+                comboBoxSubtransport.DisplayMember = "Value";
+                comboBoxSubtransport.ValueMember = "Key";
+            }
+            comboBoxSubtransport.SelectedIndex = -1;
+        }
         private void loadBoxDirection()
         {
             List<ListViewItem> items = DataDirections.getDirections();
@@ -94,16 +117,53 @@ namespace MultiTransportDelivery
                 comboBoxDirection.SelectedIndex = -1;
             }
         }
+        private void loadBoxCurrency()
+        {
+            List<ListViewItem> items = DataCurrency.getCurrencies();
+            comboBoxCurrency.Items.Clear();
+            comboBoxCurrency.DropDownStyle = ComboBoxStyle.DropDownList;
 
+            if (items.Count > 0)
+            {
+                var dict = new Dictionary<int, string>();
+
+                foreach (ListViewItem item in items)
+                {
+                    int id = Convert.ToInt32(item.SubItems[1].Text);
+                    string display = item.SubItems[0].Text;
+                    dict.Add(id, display);
+                }
+
+                comboBoxCurrency.DataSource = new BindingSource(dict, null);
+                comboBoxCurrency.DisplayMember = "Value";
+                comboBoxCurrency.ValueMember = "Key";
+                int rubId = -1;
+                foreach (var pair in dict)
+                {
+                    if (pair.Value.StartsWith("RUB"))
+                    {
+                        rubId = pair.Key;
+                        break;
+                    }
+                }
+                if (rubId > 0) comboBoxCurrency.SelectedValue = rubId;
+                else comboBoxCurrency.SelectedIndex = 0;
+            }
+        }
         private void calculateCost(object sender, EventArgs e)
         {
-            if (comboBoxClient.Text.Length > 0 && comboBoxTransport.Text.Length > 0 && comboBoxDirection.Text.Length > 0 && numericUpDownDistance.Value > 0 && numericUpDownWeight.Value > 0)
+            if (comboBoxClient.Text.Length > 0 && comboBoxTransport.Text.Length > 0 && comboBoxDirection.Text.Length > 0 && numericUpDownDistance.Value > 0 && numericUpDownWeight.Value > 0 && comboBoxCurrency.Text.Length > 0)
             {
                 float costPerKm = float.Parse(DataTransport.getTransport(int.Parse(comboBoxTransport.SelectedValue.ToString()))[0].SubItems[1].Text);
                 float distance = float.Parse(numericUpDownDistance.Value.ToString());
                 float weight = float.Parse(numericUpDownWeight.Value.ToString()) / 1000;
-                float total = (float)Math.Round(costPerKm * distance * weight, 2);
-                labelCost.Text = $"Итого: {total.ToString()} руб.";
+
+                float costRub = costPerKm * distance * weight;
+                float rate = DataCurrency.GetRate((int)comboBoxCurrency.SelectedValue);
+
+                float total = (float)Math.Round(costRub / rate, 2);
+                string currencyCode = comboBoxCurrency.Text.Substring(0, 3);
+                labelCost.Text = $"Итого: {total.ToString()} {currencyCode}";
             }
             else
             {
@@ -125,18 +185,23 @@ namespace MultiTransportDelivery
                 float weight = float.Parse(numericUpDownWeight.Value.ToString()) / 1000;
                 float total = (float)Math.Round(costPerKm * distance * weight, 2);
 
-                DataOrders.addOrder((int)comboBoxClient.SelectedValue, (int)comboBoxTransport.SelectedValue, (int)comboBoxDirection.SelectedValue, (float)numericUpDownWeight.Value, (float)numericUpDownDistance.Value, total);
+                DataOrders.addOrder((int)comboBoxClient.SelectedValue, (int)comboBoxTransport.SelectedValue, (int)comboBoxSubtransport.SelectedValue, (int)comboBoxDirection.SelectedValue, (float)numericUpDownWeight.Value, (float)numericUpDownDistance.Value, total, (int)comboBoxCurrency.SelectedValue);
                 this.Close();
             }
             else
             {
-                MessageBox.Show("Поля: Клиент, Транспорт, Направление, Расстояние, Вес обязательно должны быть заполнены!", "Внимание", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show("Поля: Клиент, Транспорт, Направление, Расстояние, Вес, Валюта обязательно должны быть заполнены!", "Внимание", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
 
-        private void buttonCancel_Click_1(object sender, EventArgs e)
+        private void comboBoxTransport_SelectedIndexChanged(object sender, EventArgs e)
         {
-            this.Close();
+            calculateCost(null,null);
+            if (comboBoxTransport.SelectedItem is KeyValuePair<int, string> kvp)
+            {
+                int transportId = kvp.Key;
+                loadBoxSubTransport(transportId);
+            }
         }
     }
 }

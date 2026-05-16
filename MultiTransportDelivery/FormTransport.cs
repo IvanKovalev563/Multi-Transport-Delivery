@@ -19,6 +19,7 @@ namespace MultiTransportDelivery
             loadTable();
             listViewTransport_SelectedIndexChanged(null, null);
             FormTransport_ResizeEnd(null, null);
+            listViewSubtransport_SelectedIndexChanged(null, null);
         }
         private void loadTable()
         {
@@ -36,6 +37,19 @@ namespace MultiTransportDelivery
             else
             {
                 labelEmptyTransport.Visible = true;
+            }
+        }
+        private void loadSubTransport()
+        {
+            List<ListViewItem> items = DataTransport.getSubtypes(int.Parse(listViewTransport.SelectedItems[0].SubItems[2].Text));
+            listViewSubtransport.Items.Clear();
+
+            if (items.Count > 0)
+            {
+                for (int i = 0; i < items.Count; i++)
+                {
+                    listViewSubtransport.Items.Add(items[i]);
+                }
             }
         }
 
@@ -64,13 +78,19 @@ namespace MultiTransportDelivery
         {
             if (listViewTransport.SelectedItems.Count > 0)
             {
+                listViewSubtransport.Enabled = true;
+                loadSubTransport();
                 buttonEditTransport.Enabled = true;
                 buttonDelTransport.Enabled = true;
+                buttonAddSubtransport.Enabled = true;
             }
             else
             {
+                listViewSubtransport.Items.Clear();
+                listViewSubtransport.Enabled = false;
                 buttonEditTransport.Enabled = false;
                 buttonDelTransport.Enabled = false;
+                buttonAddSubtransport.Enabled = false;
             }
         }
 
@@ -102,6 +122,50 @@ namespace MultiTransportDelivery
         private void textBoxSearch_TextChanged(object sender, EventArgs e)
         {
             loadTable();
+        }
+
+        private void buttonAddSubtransport_Click(object sender, EventArgs e)
+        {
+            if (listViewTransport.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("Сначала выберите вид транспорта.", "Внимание", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            string name = Microsoft.VisualBasic.Interaction.InputBox("Введите название подвида:", "Новый подвид", "");
+            if (string.IsNullOrWhiteSpace(name)) return;
+
+            int transportId = Convert.ToInt32(listViewTransport.SelectedItems[0].SubItems[2].Text);
+            if (DataTransport.addSubtransport(name, transportId))
+            {
+                loadSubTransport();
+            }
+            listViewSubtransport_SelectedIndexChanged(null, null);
+        }
+
+        private void listViewSubtransport_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listViewSubtransport.SelectedItems.Count > 0)
+            {
+                buttonDelSubtransport.Enabled = true;
+            }
+            else
+            {
+                buttonDelSubtransport.Enabled = false;
+            }
+        }
+
+        private void buttonDelSubtransport_Click(object sender, EventArgs e)
+        {
+            if (listViewSubtransport.SelectedItems.Count == 0) return;
+
+            if (MessageBox.Show("Удалить выбранный подвид?", "Подтверждение", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                int id = Convert.ToInt32(listViewSubtransport.SelectedItems[0].SubItems[2].Text);
+                DataTransport.delSubtransport(id);
+                loadSubTransport();
+            }
+            listViewSubtransport_SelectedIndexChanged(sender, e);
         }
     }
 }

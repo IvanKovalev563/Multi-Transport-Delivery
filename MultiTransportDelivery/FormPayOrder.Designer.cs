@@ -33,6 +33,8 @@
             buttonAccept = new Button();
             numericUpDownPay = new NumericUpDown();
             label2 = new Label();
+            label7 = new Label();
+            comboBoxCurrency = new ComboBox();
             ((System.ComponentModel.ISupportInitialize)numericUpDownPay).BeginInit();
             SuspendLayout();
             // 
@@ -73,7 +75,7 @@
             // 
             // numericUpDownPay
             // 
-            numericUpDownPay.DecimalPlaces = 2;
+            numericUpDownPay.DecimalPlaces = 4;
             numericUpDownPay.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
             numericUpDownPay.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
             numericUpDownPay.Location = new Point(131, 60);
@@ -92,11 +94,34 @@
             label2.TabIndex = 56;
             label2.Text = "Оплата на сумму:";
             // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label7.Location = new Point(19, 94);
+            label7.Name = "label7";
+            label7.Size = new Size(55, 17);
+            label7.TabIndex = 58;
+            label7.Text = "Валюта:";
+            // 
+            // comboBoxCurrency
+            // 
+            comboBoxCurrency.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBoxCurrency.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            comboBoxCurrency.FormattingEnabled = true;
+            comboBoxCurrency.Location = new Point(131, 91);
+            comboBoxCurrency.Name = "comboBoxCurrency";
+            comboBoxCurrency.Size = new Size(242, 25);
+            comboBoxCurrency.TabIndex = 57;
+            comboBoxCurrency.SelectedIndexChanged += comboBoxCurrency_SelectedIndexChanged;
+            // 
             // FormPayOrder
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(386, 197);
+            Controls.Add(label7);
+            Controls.Add(comboBoxCurrency);
             Controls.Add(label2);
             Controls.Add(numericUpDownPay);
             Controls.Add(buttonCancel);
@@ -117,5 +142,7 @@
         private Button buttonAccept;
         private NumericUpDown numericUpDownPay;
         private Label label2;
+        private Label label7;
+        private ComboBox comboBoxCurrency;
     }
 }
