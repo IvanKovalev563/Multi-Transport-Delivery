@@ -23,7 +23,7 @@ namespace DataAccess
 
     public static class DataClient
     {
-        public static List<ListViewItem> getClients()
+        public static List<ListViewItem> getClients(string search = null)
         {
             List<ListViewItem> items = new List<ListViewItem>();
             try
@@ -31,25 +31,45 @@ namespace DataAccess
                 using (var conn = DatabaseAccess.connectDB())
                 {
                     string sql = @"SELECT c.client_id, c.full_name, c.personal_account, c.phone,
-                                  r.name AS region, ct.name AS city, s.name AS street, c.house
+                                  r.name AS region, ct.name AS city, s.name AS street, c.house, c.region_id, c.city_id, c.street_id
                            FROM client c
                            LEFT JOIN region r ON c.region_id = r.id
                            LEFT JOIN city ct ON c.city_id = ct.id
                            LEFT JOIN street s ON c.street_id = s.id";
-                    using (var cmd = new MySqlCommand(sql, conn))
-                    using (var reader = cmd.ExecuteReader())
+                    if (!string.IsNullOrWhiteSpace(search))
                     {
-                        while (reader.Read())
+                        sql += @" WHERE c.full_name LIKE CONCAT('%', @search, '%')
+                          OR c.personal_account LIKE CONCAT('%', @search, '%')
+                          OR c.phone LIKE CONCAT('%', @search, '%')
+                          OR r.name LIKE CONCAT('%', @search, '%')
+                          OR ct.name LIKE CONCAT('%', @search, '%')
+                          OR s.name LIKE CONCAT('%', @search, '%')
+                          OR c.house LIKE CONCAT('%', @search, '%')";
+                    }
+                    sql += " ORDER BY c.full_name";
+                    using (var cmd = new MySqlCommand(sql, conn))
+                    {
+                        if (!string.IsNullOrWhiteSpace(search))
+                            cmd.Parameters.AddWithValue("@search", search);
+                        using (var reader = cmd.ExecuteReader())
                         {
-                            string address = $"{reader["region"]}, {reader["city"]}, {reader["street"]}, д.{reader["house"]}";
-                            var item = new ListViewItem(reader["full_name"].ToString());
-                            item.SubItems.Add(address);                       
-                            item.SubItems.Add(reader["personal_account"].ToString());
-                            item.SubItems.Add(reader["phone"].ToString());
-                            item.SubItems.Add(reader["client_id"].ToString());
-                            items.Add(item);
+                            while (reader.Read())
+                            {
+                                string address = $"{reader["region"]}, {reader["city"]}, {reader["street"]}, д.{reader["house"]}";
+                                var item = new ListViewItem(reader["full_name"].ToString());
+                                item.SubItems.Add(address);
+                                item.SubItems.Add(reader["personal_account"].ToString());
+                                item.SubItems.Add(reader["phone"].ToString());
+                                item.SubItems.Add(reader["client_id"].ToString());
+                                item.SubItems.Add(reader["region_id"].ToString());
+                                item.SubItems.Add(reader["city_id"].ToString());
+                                item.SubItems.Add(reader["street_id"].ToString());
+                                item.SubItems.Add(reader["house"].ToString());
+                                items.Add(item);
+                            }
                         }
                     }
+                    
                 }
             }
             catch (Exception ex)
@@ -171,17 +191,27 @@ namespace DataAccess
 
     public static class DataTransport
     {
-        public static List<ListViewItem> getTransport(int id)
+        public static List<ListViewItem> getTransport(int id = -1, string search = null)
         {
             List<ListViewItem> items = new List<ListViewItem>();
             try
             {
                 using (var conn = DatabaseAccess.connectDB())
                 {
-                    string sql = "select * from transport";
-                    if (id > -1) sql += $" where transport_id = {id}";
+                    string sql = "SELECT transport_id, name, price_per_km FROM transport";
+                    List<string> conditions = new List<string>();
+                    if (id > -1)
+                        conditions.Add($"transport_id = {id}");
+                    if (!string.IsNullOrWhiteSpace(search))
+                        conditions.Add("(name LIKE CONCAT('%', @search, '%') OR CAST(price_per_km AS CHAR) LIKE CONCAT('%', @search, '%'))");
+                    if (conditions.Count > 0)
+                        sql += " WHERE " + string.Join(" AND ", conditions);
+
+                    sql += " ORDER BY name";
                     using (var cmd = new MySqlCommand(sql, conn))
                     {
+                        if (!string.IsNullOrWhiteSpace(search))
+                            cmd.Parameters.AddWithValue("@search", search);
                         using (var reader = cmd.ExecuteReader())
                         {
                             while (reader.Read())
@@ -324,15 +354,21 @@ namespace DataAccess
 
     public static class DataDirections
     {
-        public static List<ListViewItem> getDirections()
+        public static List<ListViewItem> getDirections(string search = null)
         {
             List<ListViewItem> items = new List<ListViewItem>();
             try
             {
                 using (var conn = DatabaseAccess.connectDB())
                 {
-                    using (var cmd = new MySqlCommand($"select * from direction", conn))
+                    string sql = "SELECT direction_id, name FROM direction";
+                    if (!string.IsNullOrWhiteSpace(search))
+                        sql += " WHERE name LIKE CONCAT('%', @search, '%')";
+                    sql += " ORDER BY name";
+                    using (var cmd = new MySqlCommand(sql, conn))
                     {
+                        if (!string.IsNullOrWhiteSpace(search))
+                            cmd.Parameters.AddWithValue("@search", search);
                         using (var reader = cmd.ExecuteReader())
                         {
                             while (reader.Read())

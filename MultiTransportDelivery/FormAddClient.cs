@@ -26,7 +26,7 @@ namespace Order_Manager
         }
         private void buttonAccept_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(textBoxName.Text) || string.IsNullOrWhiteSpace(textBoxPersAccount.Text) || maskedTextBoxPhone.Text.Length != 18 ||   comboBoxRegion.SelectedIndex < 0 || comboBoxCity.SelectedIndex < 0 || comboBoxStreet.SelectedIndex < 0 || string.IsNullOrWhiteSpace(textBoxHouse.Text))
+            if (string.IsNullOrWhiteSpace(textBoxName.Text) || string.IsNullOrWhiteSpace(textBoxPersAccount.Text) || textBoxPersAccount.Text.Length != 20 || maskedTextBoxPhone.Text.Length != 18 ||   comboBoxRegion.SelectedIndex < 0 || comboBoxCity.SelectedIndex < 0 || comboBoxStreet.SelectedIndex < 0 || string.IsNullOrWhiteSpace(textBoxHouse.Text))
             {
                 MessageBox.Show("Поля: Имя, Регион, Город, Улица, Дом, Лицевой счёт и Номер телефона обязательны для заполнения!",
                                 "Внимание", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);

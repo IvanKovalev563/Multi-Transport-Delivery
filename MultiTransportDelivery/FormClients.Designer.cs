@@ -37,6 +37,7 @@
             buttonEditClient = new Button();
             buttonDelClient = new Button();
             labelEmptyClients = new Label();
+            textBoxSearch = new TextBox();
             SuspendLayout();
             // 
             // listViewClients
@@ -114,11 +115,21 @@
             labelEmptyClients.TabIndex = 8;
             labelEmptyClients.Text = "Таблица пуста";
             // 
+            // textBoxSearch
+            // 
+            textBoxSearch.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            textBoxSearch.Location = new Point(12, 413);
+            textBoxSearch.Name = "textBoxSearch";
+            textBoxSearch.Size = new Size(263, 25);
+            textBoxSearch.TabIndex = 9;
+            textBoxSearch.TextChanged += textBoxSearch_TextChanged;
+            // 
             // FormClients
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(textBoxSearch);
             Controls.Add(labelEmptyClients);
             Controls.Add(buttonDelClient);
             Controls.Add(buttonEditClient);
@@ -142,5 +153,6 @@
         private Button buttonEditClient;
         private Button buttonDelClient;
         private Label labelEmptyClients;
+        private TextBox textBoxSearch;
     }
 }

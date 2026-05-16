@@ -34,6 +34,7 @@
             buttonAddDirection = new Button();
             listViewDirections = new ListView();
             columnHeaderName = new ColumnHeader();
+            textBoxSearch = new TextBox();
             SuspendLayout();
             // 
             // labelEmptyDirections
@@ -50,7 +51,7 @@
             // 
             buttonDelDirection.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             buttonDelDirection.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            buttonDelDirection.Location = new Point(12, 262);
+            buttonDelDirection.Location = new Point(239, 262);
             buttonDelDirection.Name = "buttonDelDirection";
             buttonDelDirection.Size = new Size(189, 27);
             buttonDelDirection.TabIndex = 15;
@@ -62,7 +63,7 @@
             // 
             buttonEditDirection.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             buttonEditDirection.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            buttonEditDirection.Location = new Point(207, 262);
+            buttonEditDirection.Location = new Point(434, 262);
             buttonEditDirection.Name = "buttonEditDirection";
             buttonEditDirection.Size = new Size(189, 27);
             buttonEditDirection.TabIndex = 14;
@@ -74,7 +75,7 @@
             // 
             buttonAddDirection.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             buttonAddDirection.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            buttonAddDirection.Location = new Point(402, 262);
+            buttonAddDirection.Location = new Point(629, 262);
             buttonAddDirection.Name = "buttonAddDirection";
             buttonAddDirection.Size = new Size(189, 27);
             buttonAddDirection.TabIndex = 13;
@@ -89,7 +90,7 @@
             listViewDirections.FullRowSelect = true;
             listViewDirections.Location = new Point(13, 12);
             listViewDirections.Name = "listViewDirections";
-            listViewDirections.Size = new Size(578, 244);
+            listViewDirections.Size = new Size(805, 244);
             listViewDirections.TabIndex = 12;
             listViewDirections.UseCompatibleStateImageBehavior = false;
             listViewDirections.View = View.Details;
@@ -99,11 +100,21 @@
             // 
             columnHeaderName.Text = "Направление";
             // 
+            // textBoxSearch
+            // 
+            textBoxSearch.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            textBoxSearch.Location = new Point(13, 264);
+            textBoxSearch.Name = "textBoxSearch";
+            textBoxSearch.Size = new Size(220, 25);
+            textBoxSearch.TabIndex = 17;
+            textBoxSearch.TextChanged += textBoxSearch_TextChanged;
+            // 
             // FormDirections
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(602, 301);
+            ClientSize = new Size(829, 301);
+            Controls.Add(textBoxSearch);
             Controls.Add(labelEmptyDirections);
             Controls.Add(buttonDelDirection);
             Controls.Add(buttonEditDirection);
@@ -124,5 +135,6 @@
         private Button buttonAddDirection;
         private ListView listViewDirections;
         private ColumnHeader columnHeaderName;
+        private TextBox textBoxSearch;
     }
 }

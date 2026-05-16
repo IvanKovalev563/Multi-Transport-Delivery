@@ -17,10 +17,17 @@ namespace MultiTransportDelivery
         public FormEditClient(ListViewItem oldClient)
         {
             InitializeComponent();
+            loadBoxRegion();
             this.oldClient = oldClient;
             textBoxName.Text = oldClient.SubItems[0].Text;
             textBoxPersAccount.Text = oldClient.SubItems[2].Text;
             maskedTextBoxPhone.Text = oldClient.SubItems[3].Text;
+            comboBoxRegion.SelectedValue = int.Parse(oldClient.SubItems[5].Text.ToString());
+            loadBoxCity(int.Parse(oldClient.SubItems[5].Text.ToString()));
+            comboBoxCity.SelectedValue = int.Parse(oldClient.SubItems[6].Text.ToString());
+            loadBoxStreet(int.Parse(oldClient.SubItems[6].Text.ToString()));
+            comboBoxStreet.SelectedValue = int.Parse(oldClient.SubItems[7].Text.ToString());
+            textBoxHouse.Text = oldClient.SubItems[8].Text;
         }
 
         private void buttonCancel_Click(object sender, EventArgs e)
@@ -30,7 +37,7 @@ namespace MultiTransportDelivery
 
         private void buttonAccept_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(textBoxName.Text) || string.IsNullOrWhiteSpace(textBoxPersAccount.Text) || maskedTextBoxPhone.Text.Length != 18 || comboBoxRegion.SelectedIndex < 0 || comboBoxCity.SelectedIndex < 0 || comboBoxStreet.SelectedIndex < 0 || string.IsNullOrWhiteSpace(textBoxHouse.Text))
+            if (string.IsNullOrWhiteSpace(textBoxName.Text) || string.IsNullOrWhiteSpace(textBoxPersAccount.Text) || textBoxPersAccount.Text.Length != 20 || maskedTextBoxPhone.Text.Length != 18 || comboBoxRegion.SelectedIndex < 0 || comboBoxCity.SelectedIndex < 0 || comboBoxStreet.SelectedIndex < 0 || string.IsNullOrWhiteSpace(textBoxHouse.Text))
             {
                 MessageBox.Show("Поля: Имя, Регион, Город, Улица, Дом, Лицевой счёт и Номер телефона обязательны для заполнения!",
                                 "Внимание", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);

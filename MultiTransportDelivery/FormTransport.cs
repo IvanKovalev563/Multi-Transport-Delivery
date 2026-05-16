@@ -22,7 +22,7 @@ namespace MultiTransportDelivery
         }
         private void loadTable()
         {
-            List<ListViewItem> items = DataTransport.getTransport(-1);
+            List<ListViewItem> items = DataTransport.getTransport(-1, textBoxSearch.Text);
             listViewTransport.Items.Clear();
 
             if (items.Count > 0)
@@ -97,6 +97,11 @@ namespace MultiTransportDelivery
                 loadTable();
             }
             listViewTransport_SelectedIndexChanged(null, null);
+        }
+
+        private void textBoxSearch_TextChanged(object sender, EventArgs e)
+        {
+            loadTable();
         }
     }
 }

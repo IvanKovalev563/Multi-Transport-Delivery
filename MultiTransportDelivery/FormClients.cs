@@ -24,7 +24,7 @@ namespace MultiTransportDelivery
 
         private void loadTable()
         {
-            List<ListViewItem> items = DataClient.getClients();
+            List<ListViewItem> items = DataClient.getClients(textBoxSearch.Text);
             listViewClients.Items.Clear();
 
             if (items.Count > 0)
@@ -98,6 +98,11 @@ namespace MultiTransportDelivery
                 loadTable();
             }
             listViewClients_SelectedIndexChanged(null, null);
+        }
+
+        private void textBoxSearch_TextChanged(object sender, EventArgs e)
+        {
+            loadTable();
         }
     }
 }

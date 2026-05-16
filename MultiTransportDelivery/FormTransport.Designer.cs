@@ -35,6 +35,7 @@
             buttonEditTransport = new Button();
             buttonAddTransport = new Button();
             labelEmptyTransport = new Label();
+            textBoxSearch = new TextBox();
             SuspendLayout();
             // 
             // listViewTransport
@@ -44,7 +45,7 @@
             listViewTransport.FullRowSelect = true;
             listViewTransport.Location = new Point(12, 12);
             listViewTransport.Name = "listViewTransport";
-            listViewTransport.Size = new Size(578, 244);
+            listViewTransport.Size = new Size(805, 244);
             listViewTransport.TabIndex = 0;
             listViewTransport.UseCompatibleStateImageBehavior = false;
             listViewTransport.View = View.Details;
@@ -62,7 +63,7 @@
             // 
             buttonDelTransport.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             buttonDelTransport.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            buttonDelTransport.Location = new Point(11, 262);
+            buttonDelTransport.Location = new Point(238, 262);
             buttonDelTransport.Name = "buttonDelTransport";
             buttonDelTransport.Size = new Size(189, 27);
             buttonDelTransport.TabIndex = 10;
@@ -74,7 +75,7 @@
             // 
             buttonEditTransport.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             buttonEditTransport.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            buttonEditTransport.Location = new Point(206, 262);
+            buttonEditTransport.Location = new Point(433, 262);
             buttonEditTransport.Name = "buttonEditTransport";
             buttonEditTransport.Size = new Size(189, 27);
             buttonEditTransport.TabIndex = 9;
@@ -86,7 +87,7 @@
             // 
             buttonAddTransport.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             buttonAddTransport.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            buttonAddTransport.Location = new Point(401, 262);
+            buttonAddTransport.Location = new Point(628, 262);
             buttonAddTransport.Name = "buttonAddTransport";
             buttonAddTransport.Size = new Size(189, 27);
             buttonAddTransport.TabIndex = 8;
@@ -104,11 +105,21 @@
             labelEmptyTransport.TabIndex = 11;
             labelEmptyTransport.Text = "Таблица пуста";
             // 
+            // textBoxSearch
+            // 
+            textBoxSearch.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            textBoxSearch.Location = new Point(12, 264);
+            textBoxSearch.Name = "textBoxSearch";
+            textBoxSearch.Size = new Size(220, 25);
+            textBoxSearch.TabIndex = 18;
+            textBoxSearch.TextChanged += textBoxSearch_TextChanged;
+            // 
             // FormTransport
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(602, 301);
+            ClientSize = new Size(829, 301);
+            Controls.Add(textBoxSearch);
             Controls.Add(labelEmptyTransport);
             Controls.Add(buttonDelTransport);
             Controls.Add(buttonEditTransport);
@@ -130,5 +141,6 @@
         private ColumnHeader columnHeaderName;
         private ColumnHeader columnHeaderCost;
         private Label labelEmptyTransport;
+        private TextBox textBoxSearch;
     }
 }

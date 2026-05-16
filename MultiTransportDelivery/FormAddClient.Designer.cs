@@ -35,7 +35,6 @@
             label2 = new Label();
             label3 = new Label();
             label4 = new Label();
-            textBoxPersAccount = new TextBox();
             label5 = new Label();
             maskedTextBoxPhone = new MaskedTextBox();
             comboBoxRegion = new ComboBox();
@@ -45,6 +44,7 @@
             label7 = new Label();
             textBoxHouse = new TextBox();
             label8 = new Label();
+            textBoxPersAccount = new MaskedTextBox();
             SuspendLayout();
             // 
             // buttonAccept
@@ -123,16 +123,6 @@
             label4.Size = new Size(89, 15);
             label4.TabIndex = 8;
             label4.Text = "Лицевой счет:";
-            // 
-            // textBoxPersAccount
-            // 
-            textBoxPersAccount.Location = new Point(156, 226);
-            textBoxPersAccount.Margin = new Padding(4, 3, 4, 3);
-            textBoxPersAccount.MaxLength = 20;
-            textBoxPersAccount.Name = "textBoxPersAccount";
-            textBoxPersAccount.Size = new Size(233, 23);
-            textBoxPersAccount.TabIndex = 7;
-            textBoxPersAccount.KeyPress += textBoxPersAccount_KeyPress;
             // 
             // label5
             // 
@@ -227,11 +217,21 @@
             label8.TabIndex = 20;
             label8.Text = "Дом:";
             // 
+            // textBoxPersAccount
+            // 
+            textBoxPersAccount.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            textBoxPersAccount.Location = new Point(155, 225);
+            textBoxPersAccount.Mask = "99999999999999999999";
+            textBoxPersAccount.Name = "textBoxPersAccount";
+            textBoxPersAccount.Size = new Size(233, 25);
+            textBoxPersAccount.TabIndex = 21;
+            // 
             // FormAddClient
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(402, 346);
+            Controls.Add(textBoxPersAccount);
             Controls.Add(label8);
             Controls.Add(textBoxHouse);
             Controls.Add(label7);
@@ -242,7 +242,6 @@
             Controls.Add(maskedTextBoxPhone);
             Controls.Add(label5);
             Controls.Add(label4);
-            Controls.Add(textBoxPersAccount);
             Controls.Add(label3);
             Controls.Add(label2);
             Controls.Add(label1);
@@ -269,7 +268,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox textBoxPersAccount;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.MaskedTextBox maskedTextBoxPhone;
         private ComboBox comboBoxRegion;
@@ -279,5 +277,6 @@
         private Label label7;
         private TextBox textBoxHouse;
         private Label label8;
+        private MaskedTextBox textBoxPersAccount;
     }
 }

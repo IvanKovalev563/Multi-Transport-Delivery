@@ -23,7 +23,7 @@ namespace MultiTransportDelivery
 
         private void loadTable()
         {
-            List<ListViewItem> items = DataDirections.getDirections();
+            List<ListViewItem> items = DataDirections.getDirections(textBoxSearch.Text);
             listViewDirections.Items.Clear();
 
             if (items.Count > 0)
@@ -98,6 +98,11 @@ namespace MultiTransportDelivery
                 loadTable();
             }
             listViewDirections_SelectedIndexChanged(null, null);
+        }
+
+        private void textBoxSearch_TextChanged(object sender, EventArgs e)
+        {
+            loadTable();
         }
     }
 }
