@@ -25,8 +25,8 @@ namespace MultiTransportDelivery
             loadBoxCurrency();
 
             comboBoxClient.SelectedIndex = comboBoxClient.FindStringExact(oldOrder.SubItems[0].Text);
-            comboBoxTransport.SelectedValue = int.Parse(oldOrder.SubItems[13].Text);
-            comboBoxSubtransport.SelectedValue = int.Parse(oldOrder.SubItems[12].Text);
+            comboBoxTransport.SelectedValue = int.Parse(oldOrder.SubItems[14].Text);
+            comboBoxSubtransport.SelectedValue = int.Parse(oldOrder.SubItems[13].Text);
             comboBoxDirection.SelectedIndex = comboBoxDirection.FindStringExact(oldOrder.SubItems[2].Text);
             numericUpDownDistance.Value = decimal.Parse(oldOrder.SubItems[3].Text);
             numericUpDownWeight.Value = decimal.Parse(oldOrder.SubItems[5].Text);
