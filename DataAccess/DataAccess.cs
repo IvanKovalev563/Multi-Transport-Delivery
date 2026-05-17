@@ -146,7 +146,7 @@ namespace DataAccess
                         cmd.Parameters.AddWithValue("@house", house);
                         cmd.Parameters.AddWithValue("@acc", personalAccount);
                         cmd.Parameters.AddWithValue("@phone", phone);
-                        cmd.Parameters.AddWithValue("@clientId", oldClient.SubItems[4].ToString());
+                        cmd.Parameters.AddWithValue("@clientId", oldClient.SubItems[4].Text);
                         cmd.ExecuteNonQuery();
                     }
                 }

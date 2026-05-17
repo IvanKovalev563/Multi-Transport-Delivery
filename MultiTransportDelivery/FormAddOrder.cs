@@ -178,7 +178,7 @@ namespace MultiTransportDelivery
 
         private void buttonAccept_Click(object sender, EventArgs e)
         {
-            if (comboBoxClient.Text.Length > 0 && comboBoxTransport.Text.Length > 0 && comboBoxDirection.Text.Length > 0 && numericUpDownDistance.Value > 0 && numericUpDownWeight.Value > 0)
+            if (comboBoxClient.Text.Length > 0 && comboBoxTransport.Text.Length > 0 && comboBoxDirection.Text.Length > 0 && numericUpDownDistance.Value > 0 && numericUpDownWeight.Value > 0 && comboBoxSubtransport.Text.Length > 0)
             {
                 float costPerKm = float.Parse(DataTransport.getTransport(int.Parse(comboBoxTransport.SelectedValue.ToString()))[0].SubItems[1].Text);
                 float distance = float.Parse(numericUpDownDistance.Value.ToString());

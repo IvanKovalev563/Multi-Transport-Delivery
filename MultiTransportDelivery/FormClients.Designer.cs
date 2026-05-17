@@ -117,6 +117,7 @@
             // 
             // textBoxSearch
             // 
+            textBoxSearch.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             textBoxSearch.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
             textBoxSearch.Location = new Point(12, 413);
             textBoxSearch.Name = "textBoxSearch";

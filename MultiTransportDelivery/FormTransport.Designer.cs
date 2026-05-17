@@ -111,6 +111,7 @@
             // 
             // textBoxSearch
             // 
+            textBoxSearch.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             textBoxSearch.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
             textBoxSearch.Location = new Point(12, 264);
             textBoxSearch.Name = "textBoxSearch";
@@ -120,6 +121,7 @@
             // 
             // listViewSubtransport
             // 
+            listViewSubtransport.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             listViewSubtransport.Columns.AddRange(new ColumnHeader[] { columnHeaderSubname });
             listViewSubtransport.FullRowSelect = true;
             listViewSubtransport.Location = new Point(628, 12);
@@ -133,7 +135,7 @@
             // columnHeaderSubname
             // 
             columnHeaderSubname.Text = "Подвид транспорта";
-            columnHeaderSubname.Width = 187;
+            columnHeaderSubname.Width = 185;
             // 
             // buttonAddSubtransport
             // 

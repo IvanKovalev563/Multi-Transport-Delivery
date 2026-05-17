@@ -47,10 +47,10 @@ namespace MultiTransportDelivery
             int regionId = (int)comboBoxRegion.SelectedValue;
             int cityId = (int)comboBoxCity.SelectedValue;
             int streetId = (int)comboBoxStreet.SelectedValue;
-            string house = textBoxHouse.Text.Trim();
+            string house = textBoxHouse.Text;
 
-            string name = textBoxName.Text.Trim();
-            string persAccount = textBoxPersAccount.Text.Trim();
+            string name = textBoxName.Text;
+            string persAccount = textBoxPersAccount.Text;
             string phone = maskedTextBoxPhone.Text;
 
             if (DataClient.isClientDuplicate(name, persAccount, phone, regionId, cityId, streetId, house))

@@ -190,9 +190,9 @@
             label1.Location = new Point(13, 9);
             label1.Margin = new Padding(4, 0, 4, 0);
             label1.Name = "label1";
-            label1.Size = new Size(222, 25);
+            label1.Size = new Size(265, 25);
             label1.TabIndex = 24;
-            label1.Text = "Добавление клиента";
+            label1.Text = "Редактирование клиента";
             // 
             // textBoxName
             // 
@@ -213,6 +213,7 @@
             buttonCancel.TabIndex = 22;
             buttonCancel.Text = "Отменить";
             buttonCancel.UseVisualStyleBackColor = true;
+            buttonCancel.Click += buttonCancel_Click;
             // 
             // buttonAccept
             // 
@@ -224,6 +225,7 @@
             buttonAccept.TabIndex = 21;
             buttonAccept.Text = "Подтвердить";
             buttonAccept.UseVisualStyleBackColor = true;
+            buttonAccept.Click += buttonAccept_Click;
             // 
             // FormEditClient
             // 
