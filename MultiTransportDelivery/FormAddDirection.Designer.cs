@@ -100,6 +100,7 @@
             Controls.Add(textBoxName);
             Controls.Add(buttonCancel);
             Controls.Add(buttonAccept);
+            FormBorderStyle = FormBorderStyle.Fixed3D;
             Name = "FormAddDirection";
             Text = "Direction add";
             ResumeLayout(false);

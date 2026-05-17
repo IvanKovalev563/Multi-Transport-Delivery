@@ -144,11 +144,11 @@
             // 
             // columnHeaderCost
             // 
-            columnHeaderCost.Text = "Стоимость";
+            columnHeaderCost.Text = "Стоимость (руб.)";
             // 
             // columnHeaderPayAmount
             // 
-            columnHeaderPayAmount.Text = "Оплачено";
+            columnHeaderPayAmount.Text = "Оплачено (руб.)";
             // 
             // columnHeaderStatus
             // 

@@ -62,11 +62,11 @@
             // 
             // textBoxName
             // 
-            textBoxName.Location = new Point(180, 77);
+            textBoxName.Location = new Point(202, 77);
             textBoxName.Margin = new Padding(4, 3, 4, 3);
             textBoxName.MaxLength = 45;
             textBoxName.Name = "textBoxName";
-            textBoxName.Size = new Size(213, 23);
+            textBoxName.Size = new Size(191, 23);
             textBoxName.TabIndex = 16;
             // 
             // buttonCancel
@@ -100,19 +100,19 @@
             label5.Location = new Point(16, 109);
             label5.Margin = new Padding(4, 0, 4, 0);
             label5.Name = "label5";
-            label5.Size = new Size(149, 15);
+            label5.Size = new Size(179, 15);
             label5.TabIndex = 23;
-            label5.Text = "Стоимость (1 км/тонна):";
+            label5.Text = "Стоимость (1 км/тонна) (руб):";
             // 
             // numericUpDownPrice
             // 
             numericUpDownPrice.DecimalPlaces = 1;
             numericUpDownPrice.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
             numericUpDownPrice.Increment = new decimal(new int[] { 1, 0, 0, 65536 });
-            numericUpDownPrice.Location = new Point(180, 106);
+            numericUpDownPrice.Location = new Point(202, 106);
             numericUpDownPrice.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
             numericUpDownPrice.Name = "numericUpDownPrice";
-            numericUpDownPrice.Size = new Size(214, 25);
+            numericUpDownPrice.Size = new Size(192, 25);
             numericUpDownPrice.TabIndex = 24;
             // 
             // FormAddTransport
