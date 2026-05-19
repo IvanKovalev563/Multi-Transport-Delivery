@@ -132,7 +132,6 @@ namespace Order_Manager
             }
         }
 
-
         private void textBoxHouse_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (!char.IsDigit(e.KeyChar) && e.KeyChar != (char)Keys.Back && !char.IsLetter(e.KeyChar) && e.KeyChar != '/' && e.KeyChar != '-')

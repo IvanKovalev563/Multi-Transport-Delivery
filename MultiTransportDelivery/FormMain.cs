@@ -11,7 +11,6 @@ namespace MultiTransportDelivery
         {
             InitializeComponent();
             FormMain_ResizeEnd(null, null);
-            loadComboDirectionSearch();
             loadTable();
             listViewOrders_SelectedIndexChanged(null, null);
             checkBoxDateSearch_CheckedChanged(null, null);
@@ -25,12 +24,7 @@ namespace MultiTransportDelivery
         private void loadTable()
         {
             DateTime dateSearch = checkBoxDateSearch.Checked ? dateTimePickerSearch.Value : DateTime.MinValue;
-            int directionId = -1;
-            if (comboBoxDirectionSearch.SelectedItem is KeyValuePair<int, string> selectedPair)
-            {
-                directionId = selectedPair.Key;
-            }
-            List<ListViewItem> items = DataOrders.getOrders(-1, dateSearch, directionId);
+            List<ListViewItem> items = DataOrders.getOrders(-1, dateSearch, -1);
             listViewOrders.Items.Clear();
 
             if (items.Count > 0)
@@ -47,34 +41,7 @@ namespace MultiTransportDelivery
             }
         }
 
-        private void loadComboDirectionSearch()
-        {
-            List<ListViewItem> items = DataDirections.getDirections();
 
-            comboBoxDirectionSearch.DataSource = null;
-
-            comboBoxDirectionSearch.Items.Clear();
-            comboBoxDirectionSearch.DropDownStyle = ComboBoxStyle.DropDownList;
-
-            if (items.Count > 0)
-            {
-                var dict = new Dictionary<int, string>();
-
-                dict.Add(-1, "Все");
-                foreach (ListViewItem item in items)
-                {
-                    int id = Convert.ToInt32(item.SubItems[1].Text);
-                    string name = item.SubItems[0].Text;
-                    dict.Add(id, name);
-                }
-
-                comboBoxDirectionSearch.DataSource = new BindingSource(dict, null);
-                comboBoxDirectionSearch.DisplayMember = "Value";
-                comboBoxDirectionSearch.ValueMember = "Key";
-
-                comboBoxDirectionSearch.SelectedIndex = 0;
-            }
-        }
 
         private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -130,14 +97,6 @@ namespace MultiTransportDelivery
             FormTransport transport = new FormTransport();
             transport.ShowDialog();
             listViewOrders_SelectedIndexChanged(null, null);
-        }
-
-        private void buttonDirections_Click(object sender, EventArgs e)
-        {
-            FormDirections directions = new FormDirections();
-            directions.ShowDialog();
-            listViewOrders_SelectedIndexChanged(null, null);
-            loadComboDirectionSearch();
         }
 
         private void buttonAddOrder_Click(object sender, EventArgs e)

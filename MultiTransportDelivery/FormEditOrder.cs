@@ -14,25 +14,29 @@ namespace MultiTransportDelivery
     public partial class FormEditOrder : Form
     {
         ListViewItem oldOrder;
+        private int _cityFromId = -1;
+        private int _cityToId = -1;
+        float _calculatedDistance = 0;
         public FormEditOrder(ListViewItem oldOrder)
         {
             InitializeComponent();
             this.oldOrder = oldOrder;
             comboBoxStatus.DropDownStyle = ComboBoxStyle.DropDownList;
             loadBoxClient();
-            loadBoxDirection();
             loadBoxTransport();
             loadBoxCurrency();
 
             comboBoxClient.SelectedIndex = comboBoxClient.FindStringExact(oldOrder.SubItems[0].Text);
             comboBoxTransport.SelectedValue = int.Parse(oldOrder.SubItems[14].Text);
             comboBoxSubtransport.SelectedValue = int.Parse(oldOrder.SubItems[13].Text);
-            comboBoxDirection.SelectedIndex = comboBoxDirection.FindStringExact(oldOrder.SubItems[2].Text);
-            numericUpDownDistance.Value = decimal.Parse(oldOrder.SubItems[3].Text);
             numericUpDownWeight.Value = decimal.Parse(oldOrder.SubItems[5].Text);
             comboBoxStatus.Text = oldOrder.SubItems[8].Text;
             comboBoxCurrency.SelectedValue = int.Parse(oldOrder.SubItems[12].Text);
 
+            comboBoxRegionFrom.SelectedValue = int.Parse(oldOrder.SubItems[17].Text);
+            comboBoxRegionTo.SelectedValue = int.Parse(oldOrder.SubItems[18].Text);
+            comboBoxCityFrom.SelectedValue = int.Parse(oldOrder.SubItems[15].Text);
+            comboBoxCityTo.SelectedValue = int.Parse(oldOrder.SubItems[16].Text);
             calculateCost(null, null);
         }
         private void loadBoxClient()
@@ -104,30 +108,6 @@ namespace MultiTransportDelivery
             }
             comboBoxSubtransport.SelectedIndex = -1;
         }
-        private void loadBoxDirection()
-        {
-            List<ListViewItem> items = DataDirections.getDirections();
-            comboBoxDirection.Items.Clear();
-            comboBoxDirection.DropDownStyle = ComboBoxStyle.DropDownList;
-
-            if (items.Count > 0)
-            {
-                var dict = new Dictionary<int, string>();
-
-                foreach (ListViewItem item in items)
-                {
-                    int id = Convert.ToInt32(item.SubItems[1].Text);
-                    string name = item.SubItems[0].Text;
-                    dict.Add(id, name);
-                }
-
-                comboBoxDirection.DataSource = new BindingSource(dict, null);
-                comboBoxDirection.DisplayMember = "Value";
-                comboBoxDirection.ValueMember = "Key";
-
-                comboBoxDirection.SelectedIndex = -1;
-            }
-        }
         private void loadBoxCurrency()
         {
             List<ListViewItem> items = DataCurrency.getCurrencies();
@@ -163,10 +143,10 @@ namespace MultiTransportDelivery
         }
         private void calculateCost(object sender, EventArgs e)
         {
-            if (comboBoxClient.Text.Length > 0 && comboBoxTransport.Text.Length > 0 && comboBoxDirection.Text.Length > 0 && numericUpDownDistance.Value > 0 && numericUpDownWeight.Value > 0 && comboBoxSubtransport.Text.Length > 0)
+            if (comboBoxClient.Text.Length > 0 && comboBoxTransport.Text.Length > 0 && comboBoxCityFrom.Text.Length > 0 && comboBoxCityTo.Text.Length > 0 && _calculatedDistance > 0 && numericUpDownWeight.Value > 0 && comboBoxSubtransport.Text.Length > 0)
             {
                 float costPerKm = float.Parse(DataTransport.getTransport(int.Parse(comboBoxTransport.SelectedValue.ToString()))[0].SubItems[1].Text);
-                float distance = float.Parse(numericUpDownDistance.Value.ToString());
+                float distance = _calculatedDistance;
                 float weight = float.Parse(numericUpDownWeight.Value.ToString()) / 1000;
 
                 float costRub = costPerKm * distance * weight;
@@ -189,14 +169,14 @@ namespace MultiTransportDelivery
 
         private void buttonAccept_Click(object sender, EventArgs e)
         {
-            if (comboBoxClient.Text.Length > 0 && comboBoxTransport.Text.Length > 0 && comboBoxDirection.Text.Length > 0 && numericUpDownDistance.Value > 0 && numericUpDownWeight.Value > 0)
+            if (comboBoxClient.Text.Length > 0 && comboBoxTransport.Text.Length > 0 && comboBoxCityFrom.Text.Length > 0 && comboBoxCityTo.Text.Length > 0 && _calculatedDistance > 0 && numericUpDownWeight.Value > 0)
             {
                 float costPerKm = float.Parse(DataTransport.getTransport(int.Parse(comboBoxTransport.SelectedValue.ToString()))[0].SubItems[1].Text);
-                float distance = float.Parse(numericUpDownDistance.Value.ToString());
+                float distance = _calculatedDistance;
                 float weight = float.Parse(numericUpDownWeight.Value.ToString()) / 1000;
                 float total = (float)Math.Round(costPerKm * distance * weight, 2);
 
-                DataOrders.editOrder((int)comboBoxClient.SelectedValue, (int)comboBoxTransport.SelectedValue, (int)comboBoxSubtransport.SelectedValue, (int)comboBoxDirection.SelectedValue, (float)numericUpDownWeight.Value, (float)numericUpDownDistance.Value, total, (int)comboBoxCurrency.SelectedValue, comboBoxStatus.Text, oldOrder);
+                DataOrders.editOrder((int)comboBoxClient.SelectedValue, (int)comboBoxTransport.SelectedValue, (int)comboBoxSubtransport.SelectedValue, _cityFromId, _cityToId, (float)numericUpDownWeight.Value, _calculatedDistance, total, (int)comboBoxCurrency.SelectedValue, comboBoxStatus.Text, oldOrder);
                 this.Close();
             }
             else
