@@ -23,6 +23,7 @@ namespace Order_Manager
             labelVersion.Text = "v" + infoVersion;
             labelAuthor.Text = "Автор: " + author;
         }
+
         private void buttonOk_Click(object sender, EventArgs e)
         {
             this.Close();

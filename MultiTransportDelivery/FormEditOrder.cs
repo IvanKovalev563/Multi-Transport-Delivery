@@ -17,6 +17,8 @@ namespace MultiTransportDelivery
         private int _cityFromId = -1;
         private int _cityToId = -1;
         float _calculatedDistance = 0;
+        private bool _updatingCities = false;
+
         public FormEditOrder(ListViewItem oldOrder)
         {
             InitializeComponent();
@@ -33,6 +35,7 @@ namespace MultiTransportDelivery
             comboBoxStatus.Text = oldOrder.SubItems[8].Text;
             comboBoxCurrency.SelectedValue = int.Parse(oldOrder.SubItems[12].Text);
 
+            loadBoxRegionFromTo();
             comboBoxRegionFrom.SelectedValue = int.Parse(oldOrder.SubItems[17].Text);
             comboBoxRegionTo.SelectedValue = int.Parse(oldOrder.SubItems[18].Text);
             comboBoxCityFrom.SelectedValue = int.Parse(oldOrder.SubItems[15].Text);
@@ -193,6 +196,179 @@ namespace MultiTransportDelivery
             {
                 int transportId = kvp.Key;
                 loadBoxSubTransport(transportId);
+            }
+        }
+
+        private void loadBoxRegionFromTo()
+        {
+            List<ListViewItem> items = DataAddress.getRegions();
+            comboBoxRegionFrom.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBoxRegionTo.DropDownStyle = ComboBoxStyle.DropDownList;
+
+            if (items.Count > 0)
+            {
+                var dict = new Dictionary<int, string>();
+
+                foreach (ListViewItem item in items)
+                {
+                    int id = Convert.ToInt32(item.SubItems[1].Text);
+                    string name = item.SubItems[0].Text;
+                    dict.Add(id, name);
+                }
+
+                comboBoxRegionFrom.DataSource = new BindingSource(dict, null);
+                comboBoxRegionFrom.DisplayMember = "Value";
+                comboBoxRegionFrom.ValueMember = "Key";
+                comboBoxRegionFrom.SelectedIndex = -1;
+
+                comboBoxRegionTo.DataSource = new BindingSource(dict, null);
+                comboBoxRegionTo.DisplayMember = "Value";
+                comboBoxRegionTo.ValueMember = "Key";
+                comboBoxRegionTo.SelectedIndex = -1;
+            }
+        }
+        private void LoadCitiesToComboBox(ComboBox combo, int cityExcludeId, int regionId)
+        {
+            var items = DataAddress.getCities(regionId, cityExcludeId);
+            var dict = new Dictionary<int, string>();
+            foreach (ListViewItem item in items)
+            {
+                int id = Convert.ToInt32(item.SubItems[1].Text);
+                string name = item.SubItems[0].Text;
+                dict.Add(id, name);
+            }
+
+            int? previousSelectedId = null;
+            if (combo.SelectedItem is KeyValuePair<int, string> prevKvp)
+                previousSelectedId = prevKvp.Key;
+
+            combo.DataSource = null;
+            combo.DataSource = new BindingSource(dict, null);
+            combo.DisplayMember = "Value";
+            combo.ValueMember = "Key";
+
+            if (previousSelectedId.HasValue && dict.ContainsKey(previousSelectedId.Value) && previousSelectedId.Value != cityExcludeId)
+                combo.SelectedValue = previousSelectedId.Value;
+            else
+                combo.SelectedIndex = -1;
+        }
+        private void UpdateDistance()
+        {
+            if (comboBoxCityFrom.SelectedItem is KeyValuePair<int, string> fromKvp &&
+                comboBoxCityTo.SelectedItem is KeyValuePair<int, string> toKvp)
+            {
+                if (fromKvp.Key == toKvp.Key)
+                {
+
+                    labelDistance.Text = $"Расстояние:   - км";
+                    _calculatedDistance = 0;
+                    return;
+                }
+
+                double? distance = DataAddress.GetDistanceBetweenCities(fromKvp.Key, toKvp.Key);
+                if (distance.HasValue)
+                {
+                    _calculatedDistance = (float)distance;
+                    labelDistance.Text = $"Расстояние:    {_calculatedDistance:F1} км";
+                }
+                else
+                {
+                    labelDistance.Text = "Расстояние: не найдено";
+                    _calculatedDistance = 0;
+                }
+                calculateCost(null, null);
+            }
+            else
+            {
+                labelDistance.Text = "Расстояние: —";
+                _calculatedDistance = 0;
+            }
+        }
+        private void comboBoxRegionFrom_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBoxRegionFrom.SelectedValue is int regionId && regionId != -1)
+            {
+                LoadCitiesToComboBox(comboBoxCityFrom, cityExcludeId: _cityToId, regionId: regionId);
+            }
+            else
+            {
+                comboBoxCityFrom.DataSource = null;
+            }
+        }
+
+        private void comboBoxCityFrom_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_updatingCities) return;
+            _updatingCities = true;
+
+            try
+            {
+                if (comboBoxCityFrom.SelectedItem is KeyValuePair<int, string> kvp)
+                    _cityFromId = kvp.Key;
+                else
+                    _cityFromId = -1;
+
+                if (comboBoxRegionTo.SelectedValue is int regionToId && regionToId != -1)
+                {
+                    LoadCitiesToComboBox(comboBoxCityTo, cityExcludeId: _cityFromId, regionId: regionToId);
+                }
+                else
+                {
+                    comboBoxCityTo.DataSource = null;
+                }
+
+                if (comboBoxCityTo.SelectedItem is KeyValuePair<int, string> toKvp && toKvp.Key == _cityFromId)
+                    comboBoxCityTo.SelectedIndex = -1;
+            }
+            finally
+            {
+                _updatingCities = false;
+            }
+
+            UpdateDistance();
+        }
+
+        private void comboBoxCityTo_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_updatingCities) return;
+            _updatingCities = true;
+
+            try
+            {
+                if (comboBoxCityTo.SelectedItem is KeyValuePair<int, string> kvp)
+                    _cityToId = kvp.Key;
+                else
+                    _cityToId = -1;
+
+                if (comboBoxRegionFrom.SelectedValue is int regionFromId && regionFromId != -1)
+                {
+                    LoadCitiesToComboBox(comboBoxCityFrom, cityExcludeId: _cityToId, regionId: regionFromId);
+                }
+                else
+                {
+                    comboBoxCityFrom.DataSource = null;
+                }
+
+                if (comboBoxCityFrom.SelectedItem is KeyValuePair<int, string> fromKvp && fromKvp.Key == _cityToId)
+                    comboBoxCityFrom.SelectedIndex = -1;
+            }
+            finally
+            {
+                _updatingCities = false;
+            }
+
+            UpdateDistance();
+        }
+
+        private void comboBoxRegionTo_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBoxRegionTo.SelectedValue is int regionId && regionId != -1)
+            {
+                LoadCitiesToComboBox(comboBoxCityTo, cityExcludeId: _cityFromId, regionId: regionId);
+            }
+            else
+            {
+                comboBoxCityTo.DataSource = null;
             }
         }
     }

@@ -288,7 +288,7 @@ namespace MultiTransportDelivery
 
         private void comboBoxCityFrom_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (_updatingCities) return;  // защита от рекурсии
+            if (_updatingCities) return; 
             _updatingCities = true;
 
             try
@@ -298,7 +298,6 @@ namespace MultiTransportDelivery
                 else
                     _cityFromId = -1;
 
-                // Обновляем противоположный комбобокс, исключая выбранный город
                 if (comboBoxRegionTo.SelectedValue is int regionToId && regionToId != -1)
                 {
                     LoadCitiesToComboBox(comboBoxCityTo, cityExcludeId: _cityFromId, regionId: regionToId);
@@ -308,7 +307,6 @@ namespace MultiTransportDelivery
                     comboBoxCityTo.DataSource = null;
                 }
 
-                // Проверяем, не совпадает ли теперь город назначения с городом отправления
                 if (comboBoxCityTo.SelectedItem is KeyValuePair<int, string> toKvp && toKvp.Key == _cityFromId)
                     comboBoxCityTo.SelectedIndex = -1;
             }
@@ -322,7 +320,7 @@ namespace MultiTransportDelivery
 
         private void comboBoxCityTo_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (_updatingCities) return;  // защита от рекурсии
+            if (_updatingCities) return; 
             _updatingCities = true;
 
             try
@@ -332,7 +330,6 @@ namespace MultiTransportDelivery
                 else
                     _cityToId = -1;
 
-                // Обновляем противоположный комбобокс, исключая выбранный город
                 if (comboBoxRegionFrom.SelectedValue is int regionFromId && regionFromId != -1)
                 {
                     LoadCitiesToComboBox(comboBoxCityFrom, cityExcludeId: _cityToId, regionId: regionFromId);
@@ -342,7 +339,6 @@ namespace MultiTransportDelivery
                     comboBoxCityFrom.DataSource = null;
                 }
 
-                // Проверяем, не совпадает ли теперь город отправления с городом назначения
                 if (comboBoxCityFrom.SelectedItem is KeyValuePair<int, string> fromKvp && fromKvp.Key == _cityToId)
                     comboBoxCityFrom.SelectedIndex = -1;
             }
